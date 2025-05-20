@@ -7,7 +7,6 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-
 using namespace std;
 
 template <typename T>
@@ -31,7 +30,7 @@ T getInputValidated(const string &prompt, const string &errorMessage = "  Lỗi:
         }
     }
 }
-// hàm vẽ đường ngang
+
 void veDuongNgang(int chieuDai, char kyTu = '-')
 {
     for (int i = 0; i < chieuDai; ++i)
@@ -52,29 +51,19 @@ struct LuaChonDoiDiem
     int id;
     int diemCanDoi;
     string moTaPhanThuong;
-    string loaiPhanThuong;
-    double giaTriGiamGia;
+    string loaiPhanThuong; // "QUA_TANG", "GIAM_GIA_PHAN_TRAM"
+    double giaTri;         // Đối với GIAM_GIA_PHAN_TRAM, đây là % (vd: 0.12 cho 12%). Đối với QUA_TANG là 0.
 
     LuaChonDoiDiem(int _id, int _diem, string _moTa, string _loai, double _giaTri = 0)
-        : id(_id), diemCanDoi(_diem), moTaPhanThuong(_moTa), loaiPhanThuong(_loai), giaTriGiamGia(_giaTri) {}
-
+        : id(_id), diemCanDoi(_diem), moTaPhanThuong(_moTa), loaiPhanThuong(_loai), giaTri(_giaTri) {}
     void hienThi() const
     {
         cout << "  ID: " << id << " | Điểm: " << diemCanDoi << " | Phần thưởng: " << moTaPhanThuong;
-        if (loaiPhanThuong == "GIAM_GIA")
+        if (loaiPhanThuong == "GIAM_GIA_PHAN_TRAM")
         {
-            cout << " (Giảm " << fixed << setprecision(0) << giaTriGiamGia << " VNĐ)";
+            cout << " (Giảm " << fixed << setprecision(0) << giaTri * 100 << "%)";
         }
         cout << endl;
-    }
-
-    void luuVaoFile(ofstream &ofs) const
-    {
-        ofs << id << endl;
-        ofs << diemCanDoi << endl;
-        ofs << loaiPhanThuong << endl;
-        ofs << moTaPhanThuong << endl;
-        ofs << giaTriGiamGia << endl;
     }
 };
 
@@ -90,7 +79,6 @@ public:
     MenuItem(string ten, string moTa, int soLuong, double gia)
         : ten(ten), moTa(moTa), soLuong(soLuong), gia(gia) {}
     virtual ~MenuItem() {}
-
     string getTen() const { return ten; }
     string getMoTa() const { return moTa; }
     int getSoLuong() const { return soLuong; }
@@ -130,7 +118,6 @@ private:
 public:
     Burger(string tenGocBurger, string moTaBurger, int soLuong, double gia, string loaiThit)
         : MenuItem("Burger - " + tenGocBurger, moTaBurger, soLuong, gia), loaiThit(loaiThit) {}
-
     string getLoaiThit() const { return loaiThit; }
     void setLoaiThit(const string &newLoaiThit) { loaiThit = newLoaiThit; }
 
@@ -159,7 +146,6 @@ public:
     Drink(string tenGocNuocUong, int soLuong, double gia, string kichThuocVal)
         : MenuItem("Nước uống - " + tenGocNuocUong + " (" + kichThuocVal + ")", "", soLuong, gia),
           kichThuoc(kichThuocVal) {}
-
     string getKichThuoc() const { return kichThuoc; }
     void setKichThuoc(const string &newKichThuoc)
     {
@@ -187,7 +173,6 @@ public:
         }
         return tenDayDu;
     }
-
     string getType() const override { return "Drink"; }
 
     void hienThiThongTin() const override
@@ -216,16 +201,13 @@ private:
     int diemTichLuy;
 
 public:
-    // Constructor cho thành viên mới và tải từ file
     KhachHang(string _username, string _password, string _ten, string _sdt, string _dc, bool _daMua = false, int _diem = 0)
         : username(_username), password(_password), ten(_ten), soDienThoai(_sdt), diaChi(_dc),
           daMuaLanDau(_daMua), diemTichLuy(_diem) {}
 
-    // Constructor dùng khi khách đặt hàng
     KhachHang(string _ten, string _sdt, string _dc)
         : username(""), password(""), ten(_ten), soDienThoai(_sdt), diaChi(_dc),
           daMuaLanDau(true), diemTichLuy(0) {}
-
     string getUsername() const { return username; }
     string getPassword() const { return password; }
     string getTen() const { return ten; }
@@ -331,10 +313,8 @@ private:
 
 public:
     DonHang(int ma, const KhachHang &kh) : maDonHang(ma), khachHangDat(kh), tongTienGoc(0), tongTienThucTe(0) {}
-    // Constructor để tải từ file
     DonHang(int ma, const KhachHang &kh, double goc, double thucte)
         : maDonHang(ma), khachHangDat(kh), tongTienGoc(goc), tongTienThucTe(thucte) {}
-
     int getMaDonHang() const { return maDonHang; }
     const KhachHang &getKhachHangDat() const { return khachHangDat; }
     const vector<pair<MenuItem *, int>> &getDanhSachMonAn() const { return danhSachMonAn; }
@@ -372,7 +352,6 @@ public:
         cout << "  Tên khách hàng: " << khachHangDat.getTen() << endl;
         cout << "  Số điện thoại: " << khachHangDat.getSoDienThoai() << endl;
         cout << "  Địa chỉ: " << khachHangDat.getDiaChi() << endl;
-
         cout << "  --- Món ăn đã đặt ---" << endl;
         for (const auto &item : danhSachMonAn)
         {
@@ -448,8 +427,7 @@ private:
     vector<KhachHang> danhSachThanhVien;
     vector<DonHang> danhSachDonHang;
     vector<NhanVien> danhSachNhanVien;
-    vector<LuaChonDoiDiem> danhSachLuaChonDoiDiem;
-    int idLuaChonTiepTheo;
+    vector<LuaChonDoiDiem> danhSachLuaChonDoiDiem; // Sẽ được khởi tạo cố định
 
     KhachHang *thanhVienHienTai = nullptr;
     bool isAdminLoggedIn = false;
@@ -471,8 +449,17 @@ private:
     const string FILE_NHANVIEN = "nhanvien.txt";
     const string FILE_DONHANG = "donhang.txt";
     const string FILE_CUAHANG = "cuahang.txt";
-    const string FILE_LUACHONDOIDIEM = "luachondoidiem.txt";
     const string FILE_ADMINACC = "adminacc.txt";
+
+    void khoiTaoLuaChonDoiDiemCoDinh()
+    {
+        danhSachLuaChonDoiDiem.clear(); // Xóa nếu có dữ liệu cũ (từ lần chạy trước nếu có lỗi)
+        // ID 1: Giảm giá %; ID 2-4: Quà tặng
+        danhSachLuaChonDoiDiem.emplace_back(1, 1000, "Giảm 12% giá trị đơn hàng hiện tại", "GIAM_GIA_PHAN_TRAM", 0.12);
+        danhSachLuaChonDoiDiem.emplace_back(2, 150, "Móc khoá", "QUA_TANG", 0);
+        danhSachLuaChonDoiDiem.emplace_back(3, 250, "Gấu bông", "QUA_TANG", 0);
+        danhSachLuaChonDoiDiem.emplace_back(4, 500, "Bình nước giữ nhiệt", "QUA_TANG", 0);
+    }
 
     void taiAdminAcc()
     {
@@ -515,7 +502,6 @@ private:
             string tenDayDu, moTaBurgerHoacRong, loaiThit, kichThuocDrink;
             int soLuong;
             double gia;
-
             if (!getline(ifs, tenDayDu))
                 break;
             if (!getline(ifs, moTaBurgerHoacRong))
@@ -534,7 +520,6 @@ private:
                 continue;
             }
             ifs.ignore();
-
             if (itemType == "Burger")
             {
                 if (!getline(ifs, loaiThit))
@@ -802,71 +787,13 @@ private:
         ofs.close();
     }
 
-    void taiLuaChonDoiDiemTuFile()
-    {
-        ifstream ifs(FILE_LUACHONDOIDIEM);
-        if (!ifs.is_open())
-        {
-            if (danhSachLuaChonDoiDiem.empty())
-            {
-                danhSachLuaChonDoiDiem.emplace_back(idLuaChonTiepTheo++, 100, "Giam gia 10,000 VND", "GIAM_GIA", 10000.0);
-                danhSachLuaChonDoiDiem.emplace_back(idLuaChonTiepTheo++, 150, "01 Moc khoa logo", "QUA_TANG", 0);
-            }
-            return;
-        }
-        int id, diem;
-        double giaTri;
-        string loai, moTa;
-        int maxId = 0;
-        while (ifs >> id)
-        {
-            ifs.ignore();
-            if (!(ifs >> diem))
-            {
-                ifs.clear();
-                ifs.ignore(numeric_limits<streamsize>::max(), '\n');
-                continue;
-            }
-            ifs.ignore();
-            getline(ifs, loai);
-            getline(ifs, moTa);
-            if (!(ifs >> giaTri))
-            {
-                ifs.clear();
-                ifs.ignore(numeric_limits<streamsize>::max(), '\n');
-                continue;
-            }
-            ifs.ignore();
-            danhSachLuaChonDoiDiem.emplace_back(id, diem, moTa, loai, giaTri);
-            if (id > maxId)
-                maxId = id;
-        }
-        idLuaChonTiepTheo = maxId + 1;
-        if (danhSachLuaChonDoiDiem.empty())
-        {
-            danhSachLuaChonDoiDiem.emplace_back(idLuaChonTiepTheo++, 100, "Giam gia 10,000 VND", "GIAM_GIA", 10000.0);
-            danhSachLuaChonDoiDiem.emplace_back(idLuaChonTiepTheo++, 150, "01 Moc khoa logo", "QUA_TANG", 0);
-        }
-        ifs.close();
-    }
-    void luuLuaChonDoiDiemRaFile() const
-    {
-        ofstream ofs(FILE_LUACHONDOIDIEM);
-        if (!ofs.is_open())
-            return;
-        for (const auto &luaChon : danhSachLuaChonDoiDiem)
-        {
-            luaChon.luuVaoFile(ofs);
-        }
-        ofs.close();
-    }
-
 public:
     CuaHangBurger(string ten = "Burger Ngon Đà Nẵng", string diaChi = "[Địa chỉ]", string sdt = "[Số điện thoại]")
         : tenCuaHang(ten), diaChiCuaHang(diaChi), soDienThoaiCuaHang(sdt),
-          maDonHangTiepTheo(1), maNhanVienTiepTheo(1), idLuaChonTiepTheo(1)
+          maDonHangTiepTheo(1), maNhanVienTiepTheo(1) // Bỏ idLuaChonTiepTheo
     {
         taiAdminAcc();
+        khoiTaoLuaChonDoiDiemCoDinh(); // Khởi tạo các lựa chọn đổi điểm cố định
         taiToanBoDuLieu();
     }
     ~CuaHangBurger()
@@ -884,9 +811,7 @@ public:
         taiMenuTuFile();
         taiThanhVienTuFile();
         taiNhanVienTuFile();
-        taiLuaChonDoiDiemTuFile();
         taiDonHangTuFile();
-        cout << "Da tai du lieu tu file (neu co)." << endl;
     }
 
     void luuToanBoDuLieu() const
@@ -895,7 +820,6 @@ public:
         luuMenuRaFile();
         luuThanhVienRaFile();
         luuNhanVienRaFile();
-        luuLuaChonDoiDiemRaFile();
         luuDonHangRaFile();
         cout << "Da luu du lieu ra file." << endl;
     }
@@ -908,7 +832,6 @@ public:
         getline(cin, username);
         cout << "  Password: ";
         getline(cin, password_in);
-
         if (username == adminUsername && password_in == adminPassword)
         {
             isAdminLoggedIn = true;
@@ -928,7 +851,6 @@ public:
         getline(cin, username);
         cout << "  Password: ";
         getline(cin, password_in);
-
         for (auto &tv : danhSachThanhVien)
         {
             if (tv.getUsername() == username && tv.getPassword() == password_in)
@@ -947,7 +869,6 @@ public:
     {
         cout << "\n  --- Đăng ký tài khoản Thành viên mới ---" << endl;
         string username, password_in, ten, sdt, diachi;
-
         while (true)
         {
             cout << "  Nhập Username mong muốn: ";
@@ -975,7 +896,6 @@ public:
                 break;
             }
         }
-
         while (true)
         {
             cout << "  Nhập Password (ít nhất 8 ký tự): ";
@@ -989,10 +909,8 @@ public:
                 break;
             }
         }
-
         cout << "  Nhập Họ tên: ";
         getline(cin, ten);
-
         while (true)
         {
             cout << "  Nhập Số điện thoại: ";
@@ -1020,10 +938,8 @@ public:
                 break;
             }
         }
-
         cout << "  Nhập Địa chỉ: ";
         getline(cin, diachi);
-
         danhSachThanhVien.emplace_back(username, password_in, ten, sdt, diachi, false, 0);
         cout << "  Đăng ký thành viên thành công! Username: " << username << endl;
         cout << "  Vui lòng đăng nhập để bắt đầu mua sắm và hưởng ưu đãi." << endl;
@@ -1056,9 +972,7 @@ public:
         }
         cout << "\n  --- Thay đổi thông tin cá nhân ---" << endl;
         thanhVienHienTai->hienThiThongTin();
-
         int choice = getInputValidated<int>("  Bạn muốn thay đổi thông tin nào?\n  1. Họ tên\n  2. Số điện thoại\n  3. Địa chỉ\n  4. Mật khẩu\n  0. Quay lại\n  Nhập lựa chọn: ");
-
         string tenMoi, sdtMoi, dcMoi, passCu, passMoi1, passMoi2;
         switch (choice)
         {
@@ -1154,179 +1068,24 @@ public:
         }
     }
 
-    void xemDanhSachLuaChonDoiDiem(bool chiHienThiChoKhach = false, int diemHienCoCuaKhach = 0) const
+    // Hiển thị các lựa chọn đổi điểm cho thành viên (chỉ quà hoặc chỉ giảm giá)
+    void xemDanhSachLuaChonDoiDiemChoThanhVien(int diemHienCoCuaKhach, const string &loaiMuonXem) const
     {
-        cout << "\n  --- Danh sách các lựa chọn đổi điểm ---" << endl;
-        if (danhSachLuaChonDoiDiem.empty())
-        {
-            cout << "  Chưa có lựa chọn đổi điểm nào được cấu hình." << endl;
-            return;
-        }
+        cout << "\n  --- Các lựa chọn đổi điểm có thể (" << (loaiMuonXem == "GIAM_GIA_PHAN_TRAM" ? "Giảm giá" : "Quà tặng") << ") ---" << endl;
         bool coLuaChonPhuHop = false;
         for (const auto &luaChon : danhSachLuaChonDoiDiem)
         {
-            if (chiHienThiChoKhach)
-            {
-                if (thanhVienHienTai && thanhVienHienTai->getDiemTichLuy() >= luaChon.diemCanDoi)
-                {
-                    luaChon.hienThi();
-                    coLuaChonPhuHop = true;
-                }
-            }
-            else
+            if (luaChon.loaiPhanThuong == loaiMuonXem && diemHienCoCuaKhach >= luaChon.diemCanDoi)
             {
                 luaChon.hienThi();
                 coLuaChonPhuHop = true;
             }
         }
-        if (chiHienThiChoKhach && !coLuaChonPhuHop)
+        if (!coLuaChonPhuHop)
         {
-            cout << "  Bạn không đủ điểm cho bất kỳ lựa chọn nào hiện tại hoặc chưa có lựa chọn phù hợp." << endl;
+            cout << "  Bạn không đủ điểm cho bất kỳ lựa chọn " << (loaiMuonXem == "GIAM_GIA_PHAN_TRAM" ? "giảm giá" : "quà tặng") << " nào hiện tại." << endl;
         }
     }
-
-    void themLuaChonDoiDiem()
-    {
-        cout << "\n  --- Thêm lựa chọn đổi điểm mới ---" << endl;
-        int diem;
-        string moTa, loai;
-        double giaTriGiam = 0;
-
-        diem = getInputValidated<int>("  Nhập số điểm cần để đổi: ");
-        while (diem <= 0)
-        {
-            diem = getInputValidated<int>("  Điểm không hợp lệ. Vui lòng nhập số dương: ");
-        }
-
-        cout << "  Nhập mô tả phần thưởng (ví dụ: Giam gia 20,000 VND, 01 Ly nuoc mien phi): ";
-        getline(cin, moTa);
-
-        cout << "  Loại phần thưởng (nhập 'GIAM_GIA' hoặc 'QUA_TANG'): ";
-        getline(cin, loai);
-        loai = stringToUpper(loai);
-        while (loai != "GIAM_GIA" && loai != "QUA_TANG")
-        {
-            cout << "  Loại không hợp lệ. Vui lòng nhập 'GIAM_GIA' hoặc 'QUA_TANG': ";
-            getline(cin, loai);
-            loai = stringToUpper(loai);
-        }
-
-        if (loai == "GIAM_GIA")
-        {
-            giaTriGiam = getInputValidated<double>("  Nhập giá trị giảm giá (VNĐ): ");
-            while (giaTriGiam <= 0)
-            {
-                giaTriGiam = getInputValidated<double>("  Giá trị giảm giá không hợp lệ. Vui lòng nhập số dương: ");
-            }
-        }
-        danhSachLuaChonDoiDiem.emplace_back(idLuaChonTiepTheo++, diem, moTa, loai, giaTriGiam);
-        cout << "  Đã thêm lựa chọn đổi điểm mới!" << endl;
-    }
-
-    void suaLuaChonDoiDiem()
-    {
-        xemDanhSachLuaChonDoiDiem();
-        if (danhSachLuaChonDoiDiem.empty())
-            return;
-
-        int idSua = getInputValidated<int>("  Nhập ID của lựa chọn muốn sửa: ");
-        LuaChonDoiDiem *luaChonCanSua = nullptr;
-        for (auto &lc : danhSachLuaChonDoiDiem)
-        {
-            if (lc.id == idSua)
-            {
-                luaChonCanSua = &lc;
-                break;
-            }
-        }
-
-        if (!luaChonCanSua)
-        {
-            cout << "  Không tìm thấy lựa chọn với ID: " << idSua << endl;
-            return;
-        }
-
-        cout << "  --- Sửa lựa chọn đổi điểm ID: " << idSua << " ---" << endl;
-        cout << "  Mô tả hiện tại: " << luaChonCanSua->moTaPhanThuong << endl;
-        string moTaMoi;
-        cout << "  Nhập mô tả mới (để trống nếu không đổi): ";
-        getline(cin, moTaMoi);
-        luaChonCanSua->moTaPhanThuong = !moTaMoi.empty() ? moTaMoi : luaChonCanSua->moTaPhanThuong;
-
-        cout << "  Điểm cần đổi hiện tại: " << luaChonCanSua->diemCanDoi << endl;
-        string diemMoiStr;
-        cout << "  Nhập điểm cần đổi mới (nhập số âm hoặc chuỗi không phải số nếu không đổi): ";
-        getline(cin, diemMoiStr);
-        if (!diemMoiStr.empty())
-        {
-            try
-            {
-                int diemMoi = stoi(diemMoiStr);
-                if (diemMoi > 0)
-                    luaChonCanSua->diemCanDoi = diemMoi;
-                else if (diemMoi <= 0 && diemMoiStr != "-0")
-                    cout << "  Giá trị điểm không đổi do nhập số không dương." << endl;
-            }
-            catch (const exception &e)
-            {
-                cout << "  Giá trị điểm không hợp lệ, không thay đổi." << endl;
-            }
-        }
-
-        if (luaChonCanSua->loaiPhanThuong == "GIAM_GIA")
-        {
-            cout << "  Giá trị giảm giá hiện tại: " << fixed << setprecision(0) << luaChonCanSua->giaTriGiamGia << endl;
-            string giaTriMoiStr;
-            cout << "  Nhập giá trị giảm giá mới (nhập số âm hoặc chuỗi không phải số nếu không đổi): ";
-            getline(cin, giaTriMoiStr);
-            if (!giaTriMoiStr.empty())
-            {
-                try
-                {
-                    double giaTriMoi = stod(giaTriMoiStr);
-                    if (giaTriMoi > 0)
-                        luaChonCanSua->giaTriGiamGia = giaTriMoi;
-                    else if (giaTriMoi <= 0 && giaTriMoiStr != "-0")
-                        cout << "  Giá trị giảm giá không đổi do nhập số không dương." << endl;
-                }
-                catch (const exception &e)
-                {
-                    cout << "  Giá trị giảm giá không hợp lệ, không thay đổi." << endl;
-                }
-            }
-        }
-        cout << "  Đã cập nhật lựa chọn đổi điểm!" << endl;
-    }
-
-    void xoaLuaChonDoiDiem()
-    {
-        xemDanhSachLuaChonDoiDiem();
-        if (danhSachLuaChonDoiDiem.empty())
-            return;
-        int idXoa = getInputValidated<int>("  Nhập ID của lựa chọn muốn xóa: ");
-
-        auto it = danhSachLuaChonDoiDiem.begin();
-        bool timThay = false;
-        while (it != danhSachLuaChonDoiDiem.end())
-        {
-            if (it->id == idXoa)
-            {
-                it = danhSachLuaChonDoiDiem.erase(it);
-                timThay = true;
-                cout << "  Đã xóa lựa chọn đổi điểm có ID: " << idXoa << endl;
-                break;
-            }
-            else
-            {
-                ++it;
-            }
-        }
-        if (!timThay)
-        {
-            cout << "  Không tìm thấy lựa chọn với ID: " << idXoa << endl;
-        }
-    }
-
     MenuItem *timMonAn(int index, const vector<MenuItem *> &danhSach) const
     {
         return (index > 0 && (size_t)index <= danhSach.size()) ? danhSach[index - 1] : nullptr;
@@ -1345,22 +1104,18 @@ public:
     {
         cout << "\n  --- Nhập/Cập nhật thông tin cửa hàng ---" << endl;
         string tempTen, tempDiaChi, tempSDT;
-
         cout << "  Tên cửa hàng hiện tại: " << tenCuaHang << endl;
         cout << "  Nhập tên cửa hàng mới (để trống nếu không đổi): ";
         getline(cin, tempTen);
         tenCuaHang = !tempTen.empty() ? tempTen : tenCuaHang;
-
         cout << "  Địa chỉ cửa hàng hiện tại: " << diaChiCuaHang << endl;
         cout << "  Nhập địa chỉ cửa hàng mới (để trống nếu không đổi): ";
         getline(cin, tempDiaChi);
         diaChiCuaHang = !tempDiaChi.empty() ? tempDiaChi : diaChiCuaHang;
-
         cout << "  Số điện thoại cửa hàng hiện tại: " << soDienThoaiCuaHang << endl;
         cout << "  Nhập số điện thoại cửa hàng mới (để trống nếu không đổi): ";
         getline(cin, tempSDT);
         soDienThoaiCuaHang = !tempSDT.empty() ? tempSDT : soDienThoaiCuaHang;
-
         cout << "  Đã cập nhật thông tin cửa hàng!" << endl;
     }
 
@@ -1369,7 +1124,6 @@ public:
         string tenGoc, moTaBurger, loaiThit, kichThuoc;
         int soLuong;
         double gia;
-
         cout << (Meal ? "\n  --- Thêm burger ---" : "\n  --- Thêm nước uống ---") << endl;
         cout << "  Nhập tên gốc " << (Meal ? "burger (ví dụ: Bo Pho Mai, Ga Gion): " : "nước uống (ví dụ: Coca Cola, Tra Dao): ");
         getline(cin, tenGoc);
@@ -1439,7 +1193,6 @@ public:
         hienThiDanhSachMenu();
         if (danhSachMenu.empty())
             return;
-
         int index = getInputValidated<int>("  Nhập STT món ăn muốn chỉnh sửa: ");
         if (index <= 0 || (size_t)index > danhSachMenu.size())
         {
@@ -1448,7 +1201,6 @@ public:
         }
         MenuItem *monAnCanSua = danhSachMenu[index - 1];
         cout << "\n  --- Chỉnh sửa món ăn: " << monAnCanSua->getTen() << " ---" << endl;
-
         if (Burger *burger = dynamic_cast<Burger *>(monAnCanSua))
         {
             string moTaMoiBurger, loaiThitMoi;
@@ -1456,7 +1208,6 @@ public:
             cout << "  Mô tả mới cho Burger (để trống để giữ nguyên): ";
             getline(cin, moTaMoiBurger);
             burger->setMoTa(!moTaMoiBurger.empty() ? moTaMoiBurger : burger->getMoTa());
-
             cout << "  Loại thịt hiện tại: " << burger->getLoaiThit() << endl;
             cout << "  Loại thịt mới (để trống để giữ nguyên): ";
             getline(cin, loaiThitMoi);
@@ -1531,7 +1282,6 @@ public:
         }
         MenuItem *monAnCanXoa = danhSachMenu[index - 1];
         char confirm = getInputValidated<char>("  Bạn có chắc chắn muốn xóa " + monAnCanXoa->getTen() + "? (y/n): ");
-
         if (confirm == 'y' || confirm == 'Y')
         {
             delete monAnCanXoa;
@@ -1560,28 +1310,26 @@ public:
     }
 
     void themDonHangChoKhachHoacThanhVien()
-    {
+    { // Admin tạo đơn
         cout << "\n  --- Thêm đơn hàng mới (Quản lý) ---" << endl;
         int loaiKhach = getInputValidated<int>("  Đơn hàng này cho:\n  1. Thành viên đã đăng ký\n  2. Khách vãng lai\n  Nhập lựa chọn: ");
-
-        KhachHang *khachHangChoDonHang = nullptr;
-        KhachHang khachVangLaiSnapshot("", "", "");
-
+        KhachHang *khachHangThucTe = nullptr;      // Con trỏ tới thành viên thực sự trong danhSachThanhVien
+        KhachHang khachHangDatDonHang("", "", ""); // Thông tin sẽ được lưu vào đơn hàng
         if (loaiKhach == 1)
         {
             string idTimKiem;
             cout << "  Nhập Username hoặc SĐT của thành viên: ";
             getline(cin, idTimKiem);
-            khachHangChoDonHang = timThanhVienTheoUsername(idTimKiem);
-            if (!khachHangChoDonHang)
-                khachHangChoDonHang = timThanhVienTheoSDT(idTimKiem);
-
-            if (!khachHangChoDonHang)
+            khachHangThucTe = timThanhVienTheoUsername(idTimKiem);
+            if (!khachHangThucTe)
+                khachHangThucTe = timThanhVienTheoSDT(idTimKiem);
+            if (!khachHangThucTe)
             {
                 cout << "  Không tìm thấy thành viên." << endl;
                 return;
             }
-            cout << "  Đơn hàng cho thành viên: " << khachHangChoDonHang->getTen() << endl;
+            cout << "  Đơn hàng cho thành viên: " << khachHangThucTe->getTen() << endl;
+            khachHangDatDonHang = *khachHangThucTe; // Sao chép thông tin thành viên vào đơn
         }
         else if (loaiKhach == 2)
         {
@@ -1592,7 +1340,7 @@ public:
             getline(cin, sdt);
             cout << "  Xin mời nhập địa chỉ: ";
             getline(cin, dc);
-            khachVangLaiSnapshot = KhachHang(ten, sdt, dc);
+            khachHangDatDonHang = KhachHang(ten, sdt, dc);
         }
         else
         {
@@ -1600,7 +1348,7 @@ public:
             return;
         }
 
-        DonHang donMoi(maDonHangTiepTheo, (khachHangChoDonHang ? *khachHangChoDonHang : khachVangLaiSnapshot));
+        DonHang donMoi(maDonHangTiepTheo, khachHangDatDonHang);
         char themMonAnYN;
         do
         {
@@ -1610,7 +1358,6 @@ public:
                 cout << "Menu trống." << endl;
                 break;
             }
-
             int indexMonAn = getInputValidated<int>("  Nhập STT món ăn muốn thêm (0 để hoàn tất): ");
             if (indexMonAn == 0)
                 break;
@@ -1620,7 +1367,6 @@ public:
                 themMonAnYN = 'y';
                 continue;
             }
-
             MenuItem *monAnDaChon = danhSachMenu[indexMonAn - 1];
             int soLuongMua = getInputValidated<int>("  Nhập số lượng: ");
             if (soLuongMua <= 0)
@@ -1629,7 +1375,6 @@ public:
                 themMonAnYN = 'y';
                 continue;
             }
-
             if (monAnDaChon && soLuongMua <= monAnDaChon->getSoLuong())
             {
                 donMoi.themMonAn(monAnDaChon, soLuongMua);
@@ -1649,68 +1394,15 @@ public:
         }
         donMoi.tinhLaiTongTienGoc();
         double tongTienThanhToan = donMoi.getTongTienGoc();
-
-        if (khachHangChoDonHang)
-        {
-            if (khachHangChoDonHang->getDiemTichLuy() > 0 && !danhSachLuaChonDoiDiem.empty())
-            {
-                cout << "  Thành viên " << khachHangChoDonHang->getTen() << " có " << khachHangChoDonHang->getDiemTichLuy() << " điểm." << endl;
-                char chonDoiDiem = getInputValidated<char>("  Có muốn đổi điểm cho đơn hàng này không? (y/n): ");
-                if (chonDoiDiem == 'y' || chonDoiDiem == 'Y')
-                {
-                    xemDanhSachLuaChonDoiDiem(true, khachHangChoDonHang->getDiemTichLuy());
-                    int idLuaChon = getInputValidated<int>("  Nhập ID lựa chọn đổi điểm (0 để bỏ qua): ");
-                    if (idLuaChon > 0)
-                    {
-                        LuaChonDoiDiem *lcDaChon = nullptr;
-                        for (auto &lc : danhSachLuaChonDoiDiem)
-                        {
-                            if (lc.id == idLuaChon && khachHangChoDonHang->getDiemTichLuy() >= lc.diemCanDoi)
-                            {
-                                lcDaChon = &lc;
-                                break;
-                            }
-                        }
-                        if (lcDaChon)
-                        {
-                            if (lcDaChon->loaiPhanThuong == "GIAM_GIA")
-                            {
-                                if (tongTienThanhToan >= lcDaChon->giaTriGiamGia)
-                                {
-                                    if (khachHangChoDonHang->suDungDiem(lcDaChon->diemCanDoi))
-                                    {
-                                        tongTienThanhToan -= lcDaChon->giaTriGiamGia;
-                                        cout << "  Đã áp dụng giảm giá " << fixed << setprecision(0) << lcDaChon->giaTriGiamGia << " từ đổi điểm." << endl;
-                                    }
-                                }
-                                else
-                                {
-                                    cout << "  Giá trị đơn không đủ để giảm." << endl;
-                                }
-                            }
-                            else if (lcDaChon->loaiPhanThuong == "QUA_TANG")
-                            {
-                                if (khachHangChoDonHang->suDungDiem(lcDaChon->diemCanDoi))
-                                {
-                                    donMoi.themQuaTangDaDoi(lcDaChon->moTaPhanThuong);
-                                    cout << "  Thành viên đã đổi điểm nhận: " << lcDaChon->moTaPhanThuong << endl;
-                                }
-                            }
-                            cout << "  Điểm còn lại: " << khachHangChoDonHang->getDiemTichLuy() << endl;
-                        }
-                        else
-                        {
-                            cout << "  Lựa chọn đổi điểm không hợp lệ." << endl;
-                        }
-                    }
-                }
-            }
-            if (!khachHangChoDonHang->getDaMuaLanDau() && tongTienThanhToan > 0)
+        // Admin tạo đơn: KHÔNG đổi điểm, chỉ cộng điểm và áp dụng ưu đãi tự động
+        if (khachHangThucTe)
+        { // Nếu là đơn hàng cho thành viên
+            if (!khachHangThucTe->getDaMuaLanDau() && tongTienThanhToan > 0)
             {
                 double tienGiam = tongTienThanhToan * giamGiaLanDau;
                 tongTienThanhToan -= tienGiam;
                 cout << "  Áp dụng giảm giá " << fixed << setprecision(0) << giamGiaLanDau * 100 << "% cho thành viên mua lần đầu." << endl;
-                khachHangChoDonHang->setDaMuaLanDau(true);
+                khachHangThucTe->setDaMuaLanDau(true);
             }
             if (donMoi.getDanhSachMonAn().size() >= (size_t)soLuongLonDeGiamGia && tongTienThanhToan > 0)
             {
@@ -1719,139 +1411,19 @@ public:
                 cout << "  Áp dụng giảm giá " << fixed << setprecision(0) << giamGiaSoLuongLon * 100 << "% cho đơn hàng số lượng lớn." << endl;
             }
             tongTienThanhToan = (tongTienThanhToan < 0) ? 0 : tongTienThanhToan;
-
             int diemThuong = static_cast<int>(tongTienThanhToan / GIA_TRI_VND_CHO_MOT_DIEM);
             if (diemThuong > 0)
             {
-                khachHangChoDonHang->themDiem(diemThuong);
-                cout << "  Thành viên " << khachHangChoDonHang->getTen() << " được cộng " << diemThuong << " điểm." << endl;
-                cout << "  Tổng điểm hiện tại: " << khachHangChoDonHang->getDiemTichLuy() << " điểm." << endl;
+                khachHangThucTe->themDiem(diemThuong);
+                cout << "  Thành viên " << khachHangThucTe->getTen() << " được cộng " << diemThuong << " điểm." << endl;
+                cout << "  Tổng điểm hiện tại: " << khachHangThucTe->getDiemTichLuy() << " điểm." << endl;
             }
         }
         donMoi.setTongTienThucTe(tongTienThanhToan);
         danhSachDonHang.push_back(donMoi);
         maDonHangTiepTheo++;
         cout << "  Đã thêm đơn hàng #" << donMoi.getMaDonHang() << " thành công!" << endl;
-    }
-
-    void chinhSuaDonHang()
-    {
-        hienThiDanhSachDonHang();
-        if (danhSachDonHang.empty())
-            return;
-        int maDonHangSua = getInputValidated<int>("  Nhập mã đơn hàng muốn chỉnh sửa: ");
-
-        DonHang *donHangCanSua = nullptr;
-        int donHangIndexTrongVector = -1;
-        for (size_t i = 0; i < danhSachDonHang.size(); ++i)
-        {
-            if (danhSachDonHang[i].getMaDonHang() == maDonHangSua)
-            {
-                donHangCanSua = &danhSachDonHang[i];
-                donHangIndexTrongVector = i;
-                break;
-            }
-        }
-        if (!donHangCanSua)
-        {
-            cout << "  Mã đơn hàng không tồn tại." << endl;
-            return;
-        }
-        cout << "\n  --- Chỉnh sửa đơn hàng #" << donHangCanSua->getMaDonHang() << " ---" << endl;
-        cout << "  LƯU Ý: Chỉnh sửa đơn hàng phức tạp, các thay đổi về điểm và giảm giá có thể cần điều chỉnh thủ công sau đó." << endl;
-
-        vector<pair<MenuItem *, int>> danhSachMonCu = donHangCanSua->getDanhSachMonAn();
-        for (const auto &itemPair : danhSachMonCu)
-        {
-            if (itemPair.first)
-                itemPair.first->setSoLuong(itemPair.first->getSoLuong() + itemPair.second);
-        }
-        vector<pair<MenuItem *, int>> danhSachMonMoiChoDonHang;
-        char themMonAnYN;
-        do
-        {
-            cout << "\n  Các món hiện tại trong đơn (sau khi xóa để thêm lại):" << endl;
-            if (danhSachMonMoiChoDonHang.empty())
-            {
-                cout << "  Đơn hàng hiện trống." << endl;
-            }
-            else
-            {
-                for (size_t i = 0; i < danhSachMonMoiChoDonHang.size(); ++i)
-                {
-                    if (danhSachMonMoiChoDonHang[i].first)
-                    {
-                        cout << "  " << i + 1 << ". " << danhSachMonMoiChoDonHang[i].first->getTen()
-                             << " (x" << danhSachMonMoiChoDonHang[i].second << ")" << endl;
-                    }
-                }
-            }
-
-            hienThiDanhSachMenu();
-            if (danhSachMenu.empty())
-            {
-                cout << "Menu trống, không thể thêm món." << endl;
-                break;
-            }
-            int indexMonAn = getInputValidated<int>("  Nhập STT món ăn muốn thêm vào đơn hàng (0 để hoàn tất): ");
-            if (indexMonAn == 0)
-                break;
-            if (indexMonAn < 0 || (size_t)indexMonAn > danhSachMenu.size())
-            {
-                cout << "STT không hợp lệ." << endl;
-                themMonAnYN = 'y';
-                continue;
-            }
-            MenuItem *monAnDaChon = danhSachMenu[indexMonAn - 1];
-            int soLuongMua = getInputValidated<int>("  Nhập số lượng: ");
-            if (soLuongMua <= 0)
-            {
-                cout << "Số lượng không hợp lệ." << endl;
-                themMonAnYN = 'y';
-                continue;
-            }
-            if (monAnDaChon && soLuongMua <= monAnDaChon->getSoLuong())
-            {
-                bool daCo = false;
-                for (auto &itemPair : danhSachMonMoiChoDonHang)
-                {
-                    if (itemPair.first == monAnDaChon)
-                    {
-                        itemPair.second += soLuongMua;
-                        monAnDaChon->setSoLuong(monAnDaChon->getSoLuong() - soLuongMua);
-                        daCo = true;
-                        break;
-                    }
-                }
-                if (!daCo)
-                {
-                    danhSachMonMoiChoDonHang.push_back({monAnDaChon, soLuongMua});
-                    monAnDaChon->setSoLuong(monAnDaChon->getSoLuong() - soLuongMua);
-                }
-            }
-            else
-            {
-                cout << "  Số lượng không đủ trong kho hoặc món ăn không hợp lệ." << endl;
-            }
-            themMonAnYN = getInputValidated<char>("  Thêm món ăn khác vào đơn hàng này? (y/n): ");
-        } while (themMonAnYN == 'y' || themMonAnYN == 'Y');
-
-        KhachHang khCopy = donHangCanSua->getKhachHangDat();
-        vector<string> quaTangCopy = donHangCanSua->getQuaTangDaDoi();
-        DonHang donHangCapNhat(donHangCanSua->getMaDonHang(), khCopy);
-        for (const auto &item : danhSachMonMoiChoDonHang)
-        {
-            donHangCapNhat.themMonAn(item.first, item.second);
-        }
-        for (const string &qua : quaTangCopy)
-        {
-            donHangCapNhat.themQuaTangDaDoi(qua);
-        }
-        donHangCapNhat.setTongTienThucTe(donHangCapNhat.getTongTienGoc());
-        danhSachDonHang[donHangIndexTrongVector] = donHangCapNhat;
-
-        cout << "  Đã cập nhật đơn hàng #" << donHangCanSua->getMaDonHang() << endl;
-        cout << "  Lưu ý: Tổng tiền thanh toán đã được đặt lại bằng tổng tiền gốc. Các giảm giá/điểm thưởng có thể cần được admin xem xét lại cho đơn hàng này." << endl;
+        donMoi.hienThiThongTin();
     }
 
     void xoaDonHang()
@@ -1874,7 +1446,7 @@ public:
                         if (item.first)
                             item.first->setSoLuong(item.first->getSoLuong() + item.second);
                     }
-                    cout << "  Lưu ý: Nếu đơn hàng này của thành viên và đã có giao dịch điểm, việc hoàn điểm chưa được tự động xử lý." << endl;
+                    cout << "  Lưu ý: Nếu đơn hàng này của thành viên và đã có giao dịch điểm/ưu đãi, việc hoàn lại các ưu đãi đó chưa được tự động xử lý." << endl;
                     danhSachDonHang.erase(it);
                     cout << "  Đã xóa đơn hàng #" << maDonHangXoa << " thành công!" << endl;
                 }
@@ -1930,7 +1502,6 @@ public:
             return;
         int maNVChinhSua = getInputValidated<int>("  Nhập mã nhân viên muốn chỉnh sửa: ");
         NhanVien *nvCanSua = timNhanVien(maNVChinhSua);
-
         if (!nvCanSua)
         {
             cout << "  Không tìm thấy nhân viên có mã #" << maNVChinhSua << endl;
@@ -1938,19 +1509,15 @@ public:
         }
         cout << "\n  --- Chỉnh sửa thông tin nhân viên #" << nvCanSua->getMaNV() << " ---" << endl;
         string tenMoi, sdtMoi, dcMoi;
-
         cout << "  Tên mới (để trống để giữ nguyên [" << nvCanSua->getTenNV() << "]): ";
         getline(cin, tenMoi);
         nvCanSua->setTenNV(!tenMoi.empty() ? tenMoi : nvCanSua->getTenNV());
-
         cout << "  Số điện thoại mới (để trống để giữ nguyên [" << nvCanSua->getSoDienThoaiNV() << "]): ";
         getline(cin, sdtMoi);
         nvCanSua->setSoDienThoaiNV(!sdtMoi.empty() ? sdtMoi : nvCanSua->getSoDienThoaiNV());
-
         cout << "  Địa chỉ mới (để trống để giữ nguyên [" << nvCanSua->getDiaChiNV() << "]): ";
         getline(cin, dcMoi);
         nvCanSua->setDiaChiNV(!dcMoi.empty() ? dcMoi : nvCanSua->getDiaChiNV());
-
         cout << "  Đã cập nhật thông tin nhân viên!" << endl;
     }
 
@@ -2055,7 +1622,6 @@ public:
         vector<pair<string, double>> vecDTMon(doanhThuTungMonGoc.begin(), doanhThuTungMonGoc.end());
         sort(vecDTMon.begin(), vecDTMon.end(), [](const pair<string, double> &a, const pair<string, double> &b)
              { return a.second > b.second; });
-
         cout << "  --- Top món bán chạy nhất theo SỐ LƯỢNG ---" << endl;
         cout << left << " " << setw(5) << "Hạng" << setw(40) << "Tên Món" << right << setw(15) << "Số Lượng Bán" << left << endl;
         veDuongNgang(63);
@@ -2110,27 +1676,29 @@ public:
             cout << "STT không hợp lệ." << endl;
         }
     }
+
     void datMon_User()
-    {
+    { // Thành viên tự đặt món
         cout << "\n  --- Đặt món ---" << endl;
+        if (!thanhVienHienTai && !isAdminLoggedIn) // Chỉ cho phép thành viên đang đăng nhập tự đặt
+        {
+            cout << "  Vui lòng đăng nhập với tư cách thành viên để đặt món và hưởng ưu đãi." << endl;
+        }
         if (danhSachMenu.empty())
         {
             cout << "  Xin lỗi, menu hiện tại trống." << endl;
             return;
         }
         xemMenu_User();
-
-        KhachHang khachHangChoDonHang("", "", "");
-        bool laThanhVienDat = false;
-
-        if (thanhVienHienTai)
+        KhachHang khachHangDatDonHang("", "", ""); // Thông tin khách sẽ được lưu vào đơn hàng
+        bool laThanhVienDat = (thanhVienHienTai != nullptr);
+        if (laThanhVienDat)
         {
-            khachHangChoDonHang = *thanhVienHienTai;
-            laThanhVienDat = true;
+            khachHangDatDonHang = *thanhVienHienTai;
             cout << "  Đặt hàng với tư cách thành viên: " << thanhVienHienTai->getTen() << endl;
         }
         else
-        {
+        { // Khách vãng lai
             string ten, sdt, dc;
             cout << "  Vui lòng nhập thông tin đặt hàng:" << endl;
             cout << "  Nhập tên của bạn: ";
@@ -2139,10 +1707,10 @@ public:
             getline(cin, sdt);
             cout << "  Nhập địa chỉ: ";
             getline(cin, dc);
-            khachHangChoDonHang = KhachHang(ten, sdt, dc);
+            khachHangDatDonHang = KhachHang(ten, sdt, dc);
         }
 
-        DonHang donMoi(maDonHangTiepTheo, khachHangChoDonHang);
+        DonHang donMoi(maDonHangTiepTheo, khachHangDatDonHang);
         char datTiep;
         do
         {
@@ -2175,77 +1743,44 @@ public:
             }
             datTiep = getInputValidated<char>("  Muốn đặt thêm món khác? (y/n): ");
         } while (datTiep == 'y' || datTiep == 'Y');
-
         if (donMoi.getDanhSachMonAn().empty())
         {
             cout << "  Đơn hàng trống. Hủy bỏ tạo đơn hàng." << endl;
             return;
         }
-
-        maDonHangTiepTheo++;
         donMoi.tinhLaiTongTienGoc();
         double tongTienTamTinh = donMoi.getTongTienGoc();
-        double tongTienSauKhiApDungDiem = tongTienTamTinh;
-
+        double tongTienCuoiCung = tongTienTamTinh;
+        bool daApDungGiamGiaPhanTram = false;
+        cout << "  Tổng giá tiền tạm tính: " << fixed << setprecision(0) << tongTienTamTinh << " VNĐ" << endl;
         if (laThanhVienDat && thanhVienHienTai)
         {
-            cout << "  Điểm tích lũy hiện tại: " << thanhVienHienTai->getDiemTichLuy() << " điểm." << endl;
-            if (thanhVienHienTai->getDiemTichLuy() > 0 && !danhSachLuaChonDoiDiem.empty())
+            // Bước 1: Ưu đãi giảm giá % bằng điểm (chỉ có 1 lựa chọn là 12% cho 1000đ)
+            const LuaChonDoiDiem *luaChonGiamGia12 = nullptr;
+            for (const auto &lc : danhSachLuaChonDoiDiem)
             {
-                char doiDiemChoice = getInputValidated<char>("  Bạn có muốn đổi điểm không? (y/n): ");
-                if (doiDiemChoice == 'y' || doiDiemChoice == 'Y')
+                if (lc.loaiPhanThuong == "GIAM_GIA_PHAN_TRAM" && lc.diemCanDoi == 1000)
                 {
-                    xemDanhSachLuaChonDoiDiem(true, thanhVienHienTai->getDiemTichLuy());
-                    int idLuaChon = getInputValidated<int>("  Nhập ID lựa chọn đổi điểm (0 để bỏ qua): ");
-                    if (idLuaChon > 0)
+                    luaChonGiamGia12 = &lc;
+                    break;
+                }
+            }
+            if (luaChonGiamGia12 && thanhVienHienTai->getDiemTichLuy() >= luaChonGiamGia12->diemCanDoi)
+            {
+                char chonGiamGia = getInputValidated<char>("  Bạn có " + to_string(thanhVienHienTai->getDiemTichLuy()) + " điểm. Bạn có muốn dùng " + to_string(luaChonGiamGia12->diemCanDoi) + " điểm để " + luaChonGiamGia12->moTaPhanThuong + " không? (y/n): ");
+                if (chonGiamGia == 'y' || chonGiamGia == 'Y')
+                {
+                    if (thanhVienHienTai->suDungDiem(luaChonGiamGia12->diemCanDoi))
                     {
-                        LuaChonDoiDiem *luaChonDaChon = nullptr;
-                        for (auto &lc : danhSachLuaChonDoiDiem)
-                        {
-                            if (lc.id == idLuaChon && thanhVienHienTai->getDiemTichLuy() >= lc.diemCanDoi)
-                            {
-                                luaChonDaChon = &lc;
-                                break;
-                            }
-                        }
-                        if (luaChonDaChon)
-                        {
-                            if (luaChonDaChon->loaiPhanThuong == "GIAM_GIA")
-                            {
-                                if (tongTienSauKhiApDungDiem >= luaChonDaChon->giaTriGiamGia)
-                                {
-                                    if (thanhVienHienTai->suDungDiem(luaChonDaChon->diemCanDoi))
-                                    {
-                                        tongTienSauKhiApDungDiem -= luaChonDaChon->giaTriGiamGia;
-                                        cout << "  Đã sử dụng " << luaChonDaChon->diemCanDoi << " điểm để " << luaChonDaChon->moTaPhanThuong << endl;
-                                    }
-                                }
-                                else
-                                {
-                                    cout << "  Giá trị đơn hàng không đủ để áp dụng mức giảm giá này." << endl;
-                                }
-                            }
-                            else if (luaChonDaChon->loaiPhanThuong == "QUA_TANG")
-                            {
-                                if (thanhVienHienTai->suDungDiem(luaChonDaChon->diemCanDoi))
-                                {
-                                    donMoi.themQuaTangDaDoi(luaChonDaChon->moTaPhanThuong);
-                                    cout << "  Bạn đã đổi " << luaChonDaChon->diemCanDoi << " điểm để nhận: " << luaChonDaChon->moTaPhanThuong << endl;
-                                }
-                            }
-                            cout << "  Số điểm còn lại: " << thanhVienHienTai->getDiemTichLuy() << " điểm." << endl;
-                        }
-                        else
-                        {
-                            cout << "  Lựa chọn đổi điểm không hợp lệ hoặc bạn không đủ điểm." << endl;
-                        }
+                        double tienGiam = tongTienCuoiCung * luaChonGiamGia12->giaTri; // giaTri là 0.12
+                        tongTienCuoiCung -= tienGiam;
+                        daApDungGiamGiaPhanTram = true;
+                        cout << "  Đã áp dụng giảm giá " << fixed << setprecision(0) << luaChonGiamGia12->giaTri * 100 << "%. Số tiền giảm: " << fixed << setprecision(0) << tienGiam << " VNĐ." << endl;
+                        cout << "  Điểm còn lại: " << thanhVienHienTai->getDiemTichLuy() << " điểm." << endl;
                     }
                 }
             }
-        }
-        double tongTienCuoiCung = tongTienSauKhiApDungDiem;
-        if (laThanhVienDat && thanhVienHienTai)
-        {
+            // Ưu đãi cố định (mua lần đầu, số lượng lớn) - áp dụng sau khi đã có thể giảm giá bằng điểm %
             if (!thanhVienHienTai->getDaMuaLanDau() && tongTienCuoiCung > 0)
             {
                 double tienGiamLanDau = tongTienCuoiCung * giamGiaLanDau;
@@ -2259,22 +1794,62 @@ public:
                 tongTienCuoiCung -= tienGiamSLDon;
                 cout << "  Áp dụng giảm giá " << fixed << setprecision(0) << giamGiaSoLuongLon * 100 << "% (tương đương " << fixed << setprecision(0) << tienGiamSLDon << " VNĐ) cho đơn hàng số lượng lớn!" << endl;
             }
-        }
-        tongTienCuoiCung = (tongTienCuoiCung < 0) ? 0 : tongTienCuoiCung;
-        donMoi.setTongTienThucTe(tongTienCuoiCung);
-
-        if (laThanhVienDat && thanhVienHienTai)
-        {
+            tongTienCuoiCung = (tongTienCuoiCung < 0) ? 0 : tongTienCuoiCung;
+            donMoi.setTongTienThucTe(tongTienCuoiCung);
+            cout << "  Tổng tiền thanh toán cuối cùng: " << fixed << setprecision(0) << tongTienCuoiCung << " VNĐ" << endl;
+            // Bước 2: Cộng điểm cho đơn hàng hiện tại
             int diemThuong = (tongTienCuoiCung > 0) ? static_cast<int>(tongTienCuoiCung / GIA_TRI_VND_CHO_MOT_DIEM) : 0;
             if (diemThuong > 0)
             {
                 thanhVienHienTai->themDiem(diemThuong);
                 cout << "  Bạn đã được cộng " << diemThuong << " điểm cho đơn hàng này." << endl;
             }
-            cout << "  Tổng điểm tích lũy hiện tại: " << thanhVienHienTai->getDiemTichLuy() << " điểm." << endl;
+            cout << "  Tổng điểm tích lũy hiện tại của bạn là: " << thanhVienHienTai->getDiemTichLuy() << " điểm." << endl;
+            // Bước 3: Hỏi đổi quà tặng (sau khi đã cộng điểm mới)
+            char chonDoiQua = getInputValidated<char>("  Bạn có muốn dùng điểm để đổi quà tặng không? (y/n): ");
+            if (chonDoiQua == 'y' || chonDoiQua == 'Y')
+            {
+                xemDanhSachLuaChonDoiDiemChoThanhVien(thanhVienHienTai->getDiemTichLuy(), "QUA_TANG");
+                if (any_of(danhSachLuaChonDoiDiem.begin(), danhSachLuaChonDoiDiem.end(),
+                           [&](const LuaChonDoiDiem &lc)
+                           { return lc.loaiPhanThuong == "QUA_TANG" && thanhVienHienTai->getDiemTichLuy() >= lc.diemCanDoi; }))
+                {
+                    int idLuaChonQua = getInputValidated<int>("  Nhập ID quà tặng muốn đổi (0 để bỏ qua): ");
+                    if (idLuaChonQua > 0)
+                    {
+                        LuaChonDoiDiem *luaChonQuaDaChon = nullptr;
+                        for (auto &lc : danhSachLuaChonDoiDiem)
+                        {
+                            if (lc.id == idLuaChonQua && lc.loaiPhanThuong == "QUA_TANG" && thanhVienHienTai->getDiemTichLuy() >= lc.diemCanDoi)
+                            {
+                                luaChonQuaDaChon = &lc;
+                                break;
+                            }
+                        }
+                        if (luaChonQuaDaChon)
+                        {
+                            if (thanhVienHienTai->suDungDiem(luaChonQuaDaChon->diemCanDoi))
+                            {
+                                donMoi.themQuaTangDaDoi(luaChonQuaDaChon->moTaPhanThuong);
+                                cout << "  Bạn đã đổi " << luaChonQuaDaChon->diemCanDoi << " điểm để nhận: " << luaChonQuaDaChon->moTaPhanThuong << endl;
+                                cout << "  Số điểm còn lại: " << thanhVienHienTai->getDiemTichLuy() << " điểm." << endl;
+                            }
+                        }
+                        else
+                        {
+                            cout << "  Lựa chọn quà tặng không hợp lệ hoặc bạn không đủ điểm." << endl;
+                        }
+                    }
+                }
+            }
         }
-        cout << "  Tổng tiền thanh toán cuối cùng: " << fixed << setprecision(0) << tongTienCuoiCung << " VNĐ" << endl;
+        else
+        {                                               // Khách vãng lai
+            donMoi.setTongTienThucTe(tongTienCuoiCung); // tongTienCuoiCung == tongTienTamTinh
+            cout << "  Tổng tiền thanh toán: " << fixed << setprecision(0) << tongTienCuoiCung << " VNĐ" << endl;
+        }
         danhSachDonHang.push_back(donMoi);
+        maDonHangTiepTheo++; // Tăng mã cho đơn hàng tiếp theo
         cout << "  Đã tạo đơn hàng #" << donMoi.getMaDonHang() << " thành công!" << endl;
     }
 
@@ -2298,7 +1873,6 @@ int main()
     CuaHangBurger cuaHang;
     int luaChonBanDau;
     const int menuWidth = 70;
-
     do
     {
         cout << "\n";
@@ -2312,9 +1886,7 @@ int main()
         cout << " * " << setw((menuWidth - 4) / 2 - 12) << "" << "4. Tiếp tục là Khách" << setw((menuWidth - 4) / 2 - 6) << "" << " *" << endl;
         cout << " * " << setw((menuWidth - 4) / 2 - 12) << "" << "0. Thoát chương trình" << setw((menuWidth - 4) / 2 - 7) << "" << " *" << endl;
         veDuongNgang(menuWidth, '*');
-
         luaChonBanDau = getInputValidated<int>("  Nhập lựa chọn của bạn: ", "  Lựa chọn không hợp lệ. Vui lòng nhập số.");
-
         switch (luaChonBanDau)
         {
         case 1:
@@ -2327,7 +1899,26 @@ int main()
                     veDuongNgang(menuWidth, '-');
                     cout << string((menuWidth - 26) / 2, ' ') << "--- CHỨC NĂNG QUẢN LÝ ---" << endl;
                     veDuongNgang(menuWidth, '-');
-                    cout << "  1. Nhập/Cập nhật thông tin cửa hàng\n  2. Thêm burger\n  3. Thêm nước uống\n  4. Xem danh sách menu\n  5. Chỉnh sửa món ăn\n  6. Xóa món ăn\n  7. Xem danh sách đơn hàng\n  8. Thêm đơn hàng (cho khách/thành viên)\n  9. Chỉnh sửa đơn hàng\n  10. Xóa đơn hàng\n  11. Thêm nhân viên\n  12. Xem danh sách nhân viên\n  13. Chỉnh sửa nhân viên\n  14. Xóa nhân viên\n  15. Xem danh sách thành viên\n  16. Báo cáo doanh thu\n  17. Báo cáo món bán chạy\n  18. Quản lý lựa chọn đổi điểm\n  19. Đăng xuất\n  0. Thoát khỏi menu quản lý (Sẽ đăng xuất)" << endl;
+                    cout << "  1. Nhập/Cập nhật thông tin cửa hàng\n"
+                         << "  2. Thêm burger\n"
+                         << "  3. Thêm nước uống\n"
+                         << "  4. Xem danh sách menu\n"
+                         << "  5. Chỉnh sửa món ăn\n"
+                         << "  6. Xóa món ăn\n"
+                         << "  7. Xem danh sách đơn hàng\n"
+                         << "  8. Thêm đơn hàng (cho khách/thành viên)\n"
+                         // << "  9. Chỉnh sửa đơn hàng (ĐÃ BỎ)\n" // Chức năng này đã bị bỏ
+                         << "  9. Xóa đơn hàng\n" // Đổi số thứ tự
+                         << "  10. Thêm nhân viên\n"
+                         << "  11. Xem danh sách nhân viên\n"
+                         << "  12. Chỉnh sửa nhân viên\n"
+                         << "  13. Xóa nhân viên\n"
+                         << "  14. Xem danh sách thành viên\n"
+                         << "  15. Báo cáo doanh thu\n"
+                         << "  16. Báo cáo món bán chạy\n"
+                         // << "  18. Quản lý lựa chọn đổi điểm (ĐÃ BỎ)\n" // Chức năng này đã bị bỏ
+                         << "  17. Đăng xuất\n" // Đổi số thứ tự
+                         << "  0. Thoát khỏi menu quản lý (Sẽ đăng xuất)" << endl;
 
                     choiceQuanLy = getInputValidated<int>("  Nhập lựa chọn của bạn: ");
                     switch (choiceQuanLy)
@@ -2356,71 +1947,36 @@ int main()
                     case 8:
                         cuaHang.themDonHangChoKhachHoacThanhVien();
                         break;
+                    // case 9: // Chỉnh sửa đơn hàng - ĐÃ BỎ
                     case 9:
-                        cuaHang.chinhSuaDonHang();
-                        break;
-                    case 10:
                         cuaHang.xoaDonHang();
-                        break;
-                    case 11:
+                        break; // Trước là 10
+                    case 10:
                         cuaHang.themNhanVien();
-                        break;
-                    case 12:
+                        break; // Trước là 11
+                    case 11:
                         cuaHang.xemDanhSachNhanVien();
-                        break;
-                    case 13:
+                        break; // Trước là 12
+                    case 12:
                         cuaHang.chinhSuaNhanVien();
-                        break;
-                    case 14:
+                        break; // Trước là 13
+                    case 13:
                         cuaHang.xoaNhanVien();
-                        break;
-                    case 15:
+                        break; // Trước là 14
+                    case 14:
                         cuaHang.hienThiDanhSachThanhVien();
-                        break;
-                    case 16:
+                        break; // Trước là 15
+                    case 15:
                         cuaHang.baoCaoDoanhThu();
-                        break;
-                    case 17:
+                        break; // Trước là 16
+                    case 16:
                         cuaHang.baoCaoMonBanChay();
-                        break;
-                    case 18:
-                    {
-                        int choiceDoiDiem;
-                        do
-                        {
-                            cout << "\n  --- Quản lý Lựa Chọn Đổi Điểm ---\n  1. Xem danh sách\n  2. Thêm lựa chọn\n  3. Sửa lựa chọn\n  4. Xóa lựa chọn\n  0. Quay lại\n";
-                            choiceDoiDiem = getInputValidated<int>("  Nhập lựa chọn: ");
-                            switch (choiceDoiDiem)
-                            {
-                            case 1:
-                                cuaHang.xemDanhSachLuaChonDoiDiem();
-                                break;
-                            case 2:
-                                cuaHang.themLuaChonDoiDiem();
-                                break;
-                            case 3:
-                                cuaHang.suaLuaChonDoiDiem();
-                                break;
-                            case 4:
-                                cuaHang.xoaLuaChonDoiDiem();
-                                break;
-                            case 0:
-                                break;
-                            default:
-                                cout << "  Lựa chọn không hợp lệ." << endl;
-                            }
-                            if (choiceDoiDiem != 0)
-                            {
-                                cout << "\n  Nhấn Enter để tiếp tục...";
-                                cin.get();
-                            }
-                        } while (choiceDoiDiem != 0);
-                        break;
-                    }
-                    case 19:
+                        break; // Trước là 17
+                    // case 18: // Quản lý đổi điểm - ĐÃ BỎ
+                    case 17:
                         cuaHang.dangXuat();
                         choiceQuanLy = 0;
-                        break;
+                        break; // Trước là 19
                     case 0:
                         cuaHang.dangXuat();
                         cout << "  Đã đăng xuất và quay lại menu chính." << endl;
@@ -2428,8 +1984,8 @@ int main()
                     default:
                         cout << "  Lựa chọn không hợp lệ." << endl;
                     }
-                    if (choiceQuanLy != 0 && choiceQuanLy != 18 && choiceQuanLy != 19)
-                    {
+                    if (choiceQuanLy != 0 && choiceQuanLy != 17)
+                    { // Điều chỉnh số cho đăng xuất
                         cout << "\n  Nhấn Enter để tiếp tục...";
                         cin.get();
                     }
@@ -2510,7 +2066,7 @@ int main()
                     break;
                 case 3:
                     cuaHang.datMon_User();
-                    break;
+                    break; // Khách vãng lai sẽ không có phần đổi điểm trong hàm này
                 case 0:
                     cout << "  Quay lại menu chính." << endl;
                     break;
@@ -2535,6 +2091,5 @@ int main()
             cin.get();
         }
     } while (luaChonBanDau != 0);
-
     return 0;
 }
