@@ -1125,7 +1125,7 @@ public:
         int soLuong;
         double gia;
         cout << (Meal ? "\n  --- Thêm burger ---" : "\n  --- Thêm nước uống ---") << endl;
-        cout << "  Nhập tên gốc " << (Meal ? "burger (ví dụ: Bo Pho Mai, Ga Gion): " : "nước uống (ví dụ: Coca Cola, Tra Dao): ");
+        cout << "  Nhập tên cho " << (Meal ? "burger (ví dụ: Bo Pho Mai, Ga Gion): " : "nước uống (ví dụ: Coca Cola, Tra Dao): ");
         getline(cin, tenGoc);
 
         if (Meal)
@@ -1176,13 +1176,14 @@ public:
             return;
         }
         cout << left;
-        cout << " " << setw(5) << "STT" << setw(40) << "Tên" << setw(12) << "Số lượng" << setw(15) << "Giá (VNĐ)" << endl;
-        veDuongNgang(72);
+        cout << " " << setw(5) << "STT" << setw(30) << "Tên" << setw(10) << "Số lượng" << setw(15) << right << "Giá (VNĐ)" << endl;
+        veDuongNgang(60);
         for (size_t i = 0; i < danhSachMenu.size(); ++i)
         {
+            cout << left;
             cout << " " << setw(5) << i + 1
-                 << setw(40) << danhSachMenu[i]->getTen()
-                 << setw(12) << danhSachMenu[i]->getSoLuong()
+                 << setw(30) << danhSachMenu[i]->getTen()
+                 << setw(10) << danhSachMenu[i]->getSoLuong()
                  << setw(15) << fixed << setprecision(0) << danhSachMenu[i]->getGia() << endl;
         }
         cout << right;
@@ -1656,12 +1657,14 @@ public:
             return;
         }
         cout << left;
-        cout << " " << setw(5) << "STT" << setw(40) << "Tên" << setw(15) << "Giá (VNĐ)" << endl;
-        veDuongNgang(60);
+        cout << " " << setw(5) << "STT" << setw(40) << "Tên" << setw(10) << "Số lượng" << setw(15) << right << "Giá (VNĐ)" << endl;
+        veDuongNgang(70);
         for (size_t i = 0; i < danhSachMenu.size(); ++i)
         {
+            cout << left;
             cout << " " << setw(5) << i + 1
                  << setw(40) << danhSachMenu[i]->getTen()
+                 << setw(10) << danhSachMenu[i]->getSoLuong()
                  << setw(15) << fixed << setprecision(0) << danhSachMenu[i]->getGia() << endl;
         }
         cout << right;
