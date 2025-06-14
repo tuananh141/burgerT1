@@ -93,8 +93,8 @@ struct LuaChonDoiDiem
     string LoaiPhanThuong;
     double GiaTri;
     LuaChonDoiDiem() : Id(0), DiemCanDoi(0), MoTaPhanThuong(""), LoaiPhanThuong(""), GiaTri(0) {}
-    LuaChonDoiDiem(int _id, int _diem, string _moTa, string _loai, double _GiaTri = 0)
-        : Id(_id), DiemCanDoi(_diem), MoTaPhanThuong(_moTa), LoaiPhanThuong(_loai), GiaTri(_GiaTri) {}
+    LuaChonDoiDiem(int Id, int Diem, string MoTa, string Loai, double GiaTri = 0)
+        : Id(Id), DiemCanDoi(Diem), MoTaPhanThuong(MoTa), LoaiPhanThuong(Loai), GiaTri(GiaTri) {}
     void HienThi() const
     {
         cout << "  ID: " << Id << " | Diem: " << DiemCanDoi << " | Phan thuong: " << MoTaPhanThuong;
@@ -165,8 +165,8 @@ private:
     string LoaiThit;
 
 public:
-    Burger(string _TenGocBurger, string _MoTaBurger, int _SoLuong, double _Gia, string _LoaiThit)
-        : MenuItem(_TenGocBurger, _MoTaBurger, _SoLuong, _Gia), LoaiThit(_LoaiThit)
+    Burger(string _TenGocBurger, string _MoTaBurger, int _SoLuong, double _Gia, string LoaiThit)
+        : MenuItem(_TenGocBurger, _MoTaBurger, _SoLuong, _Gia), LoaiThit(LoaiThit)
     {
         CapNhatTenDayDu();
     }
@@ -241,9 +241,9 @@ private:
     int DiemTichLuy;
 
 public:
-    KhachHang(string _username, string _password, string _ten, string _sdt, string _dc, bool _daMua = false, int _diem = 0)
+    KhachHang(string _username, string _password, string _ten, string _sdt, string _dc, bool _daMua = false, int Diem = 0)
         : Username(_username), Password(_password), Ten(_ten), SoDienThoai(_sdt), DiaChi(_dc),
-          DaMuaLanDau(_daMua), DiemTichLuy(_diem) {}
+          DaMuaLanDau(_daMua), DiemTichLuy(Diem) {}
     KhachHang(string _ten, string _sdt, string _dc)
         : Username(""), Password(""), Ten(_ten), SoDienThoai(_sdt), DiaChi(_dc),
           DaMuaLanDau(true), DiemTichLuy(0) {}
@@ -496,7 +496,7 @@ private:
     double GiamGiaLanDau = 0.1;
     int SoLuongLonDeGiamGia = 5;
     double GiamGiaSoLuongLon = 0.05;
-    const int Gia_TRI_VND_CHO_MOT_DIEM = 1000;
+    const int Gia_TRI_VND_CHO_MOTDiem = 1000;
 
     const string FILE_BURGER = "burger.txt";
     const string FILE_DRINK = "drink.txt";
@@ -1567,7 +1567,7 @@ public:
                 cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaSoLuongLon * 100 << "% cho don hang so luong lon." << endl;
             }
             tongTienThanhToan = (tongTienThanhToan < 0) ? 0 : tongTienThanhToan;
-            int diemThuong = static_cast<int>(tongTienThanhToan / Gia_TRI_VND_CHO_MOT_DIEM);
+            int diemThuong = static_cast<int>(tongTienThanhToan / Gia_TRI_VND_CHO_MOTDiem);
             if (diemThuong > 0)
             {
                 khachHangThucTe->ThemDiem(diemThuong);
@@ -1939,7 +1939,7 @@ public:
             tongTienCuoiCung = (tongTienCuoiCung < 0) ? 0 : tongTienCuoiCung;
             donMoi.SetTongTienThucTe(tongTienCuoiCung);
             cout << "  Tong tien thanh toan cuoi cung: " << fixed << setprecision(0) << tongTienCuoiCung << " VND" << endl;
-            int diemThuong = (tongTienCuoiCung > 0) ? static_cast<int>(tongTienCuoiCung / Gia_TRI_VND_CHO_MOT_DIEM) : 0;
+            int diemThuong = (tongTienCuoiCung > 0) ? static_cast<int>(tongTienCuoiCung / Gia_TRI_VND_CHO_MOTDiem) : 0;
             if (diemThuong > 0)
             {
                 ThanhVienHienTai->ThemDiem(diemThuong);
