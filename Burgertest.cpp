@@ -483,7 +483,7 @@ private:
     array<LuaChonDoiDiem, 4> DanhSachLuaChonDoiDiem;
 
     KhachHang *ThanhVienHienTai = nullptr;
-    bool AdminDangNhap = false;
+    bool IsAdminLoggedIn = false;
     string AdminUsername = "admin";
     string AdminPassword = "admin123";
     string TenCuaHang;
@@ -919,7 +919,7 @@ public:
         getline(cin, password);
         if (username == AdminUsername && password == AdminPassword)
         {
-            AdminDangNhap = true;
+            IsAdminLoggedIn = true;
             ThanhVienHienTai = nullptr;
             cout << "  Dang nhap Quan Ly thanh cong!" << endl;
             return true;
@@ -941,7 +941,7 @@ public:
             if (tv.GetUsername() == username && tv.GetPassword() == password)
             {
                 ThanhVienHienTai = &tv;
-                AdminDangNhap = false;
+                IsAdminLoggedIn = false;
                 cout << "  Chao mung tro lai, " << tv.GetTen() << "!" << endl;
                 return true;
             }
@@ -1032,9 +1032,9 @@ public:
     // Hàm này dùng để đăng xuất thành viên hoặc quản lý
     void DangXuat()
     {
-        if (AdminDangNhap)
+        if (IsAdminLoggedIn)
         {
-            AdminDangNhap = false;
+            IsAdminLoggedIn = false;
             cout << "  Da dang xuat khoi tai khoan Quan ly." << endl;
         }
         else if (ThanhVienHienTai)
