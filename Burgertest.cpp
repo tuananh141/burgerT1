@@ -36,10 +36,8 @@ void VeHangBang(const vector<string> &cells, const vector<int> &widths)
 void VeHangPhanCach(string text, const vector<int> &widths)
 {
     cout << "  |";
-    // Tính tổng chiều rộng của nội dung bảng
     int total_width = accumulate(widths.begin(), widths.end(), 0) + widths.size() - 1;
     string text_to_insert = " " + text + " ";
-    // Tính toán phần đệm hai bên
     int padding_total = total_width - text_to_insert.length();
     int padding_left = padding_total / 2;
     int padding_right = padding_total - padding_left;
@@ -93,12 +91,12 @@ struct LuaChonDoiDiem
     string LoaiPhanThuong;
     double GiaTri;
     LuaChonDoiDiem() : Id(0), DiemCanDoi(0), MoTaPhanThuong(""), LoaiPhanThuong(""), GiaTri(0) {}
-    LuaChonDoiDiem(int _id, int _diem, string _moTa, string _loai, double _GiaTri = 0)
-        : Id(_id), DiemCanDoi(_diem), MoTaPhanThuong(_moTa), LoaiPhanThuong(_loai), GiaTri(_GiaTri) {}
+    LuaChonDoiDiem(int _id, int Diem, string MoTa, string _loai, double GiaTri = 0)
+        : Id(_id), DiemCanDoi(Diem), MoTaPhanThuong(MoTa), LoaiPhanThuong(_loai), GiaTri(GiaTri) {}
     void HienThi() const
     {
         cout << "  ID: " << Id << " | Diem: " << DiemCanDoi << " | Phan thuong: " << MoTaPhanThuong;
-        if (LoaiPhanThuong == "GiaM_Gia_PHAN_TRAM")
+        if (LoaiPhanThuong == "GiamGiaTheoPhanTram")
         {
             cout << " (Giam " << fixed << setprecision(0) << GiaTri * 100 << "%)";
         }
@@ -118,8 +116,8 @@ protected:
     string TenGoc;
 
 public:
-    MenuItem(string _TenGoc, string _moTa, int _SoLuong, double _Gia)
-        : TenGoc(_TenGoc), MoTa(_moTa), SoLuong(_SoLuong), Gia(_Gia) {}
+    MenuItem(string TenGoc, string MoTa, int SoLuong, double Gia)
+        : TenGoc(TenGoc), MoTa(MoTa), SoLuong(SoLuong), Gia(Gia) {}
     virtual ~MenuItem() {}
     virtual void CapNhatTenDayDu() = 0;
     string GetTen() const { return Ten; }
@@ -165,8 +163,8 @@ private:
     string LoaiThit;
 
 public:
-    Burger(string _TenGocBurger, string _MoTaBurger, int _SoLuong, double _Gia, string _LoaiThit)
-        : MenuItem(_TenGocBurger, _MoTaBurger, _SoLuong, _Gia), LoaiThit(_LoaiThit)
+    Burger(string TenGocBurger, string MoTaBurger, int SoLuong, double Gia, string _LoaiThit)
+        : MenuItem(TenGocBurger, MoTaBurger, SoLuong, Gia), LoaiThit(_LoaiThit)
     {
         CapNhatTenDayDu();
     }
@@ -198,8 +196,8 @@ private:
     string KichThuoc;
 
 public:
-    Drink(string _TenGocNuocUong, int _SoLuong, double _Gia, string _KichThuocVal)
-        : MenuItem(_TenGocNuocUong, "", _SoLuong, _Gia), KichThuoc(_KichThuocVal)
+    Drink(string TenGocNuocUong, int SoLuong, double Gia, string KichThuoc)
+        : MenuItem(TenGocNuocUong, "", SoLuong, Gia), KichThuoc(KichThuoc)
     {
         CapNhatTenDayDu();
     }
@@ -241,11 +239,11 @@ private:
     int DiemTichLuy;
 
 public:
-    KhachHang(string _username, string _password, string _ten, string _sdt, string _dc, bool _daMua = false, int _diem = 0)
-        : Username(_username), Password(_password), Ten(_ten), SoDienThoai(_sdt), DiaChi(_dc),
-          DaMuaLanDau(_daMua), DiemTichLuy(_diem) {}
-    KhachHang(string _ten, string _sdt, string _dc)
-        : Username(""), Password(""), Ten(_ten), SoDienThoai(_sdt), DiaChi(_dc),
+    KhachHang(string Username, string Password, string Ten, string sdt, string dc, bool DaMua = false, int Diem = 0)
+        : Username(Username), Password(Password), Ten(Ten), SoDienThoai(sdt), DiaChi(dc),
+          DaMuaLanDau(DaMua), DiemTichLuy(Diem) {}
+    KhachHang(string Ten, string sdt, string dc)
+        : Username(""), Password(""), Ten(Ten), SoDienThoai(sdt), DiaChi(dc),
           DaMuaLanDau(true), DiemTichLuy(0) {}
     string GetUsername() const { return Username; }
     string GetPassword() const { return Password; }
@@ -268,11 +266,11 @@ public:
         }
     }
     // Giảm điểm tích lũy của khách hàng nếu đổi điểm
-    bool SuDungDiem(int diemCanDung)
+    bool SuDungDiem(int DiemCanDung)
     {
-        if (diemCanDung > 0 && DiemTichLuy >= diemCanDung)
+        if (DiemCanDung > 0 && DiemTichLuy >= DiemCanDung)
         {
-            DiemTichLuy -= diemCanDung;
+            DiemTichLuy -= DiemCanDung;
             return true;
         }
         return false;
@@ -315,13 +313,13 @@ private:
     string DiaChiNV;
 
 public:
-    NhanVien(int ma, string ten, string sdt, string dc)
-        : MaNV(ma), TenNV(ten), SoDienThoaiNV(sdt), DiaChiNV(dc) {}
+    NhanVien(int ma, string Ten, string sdt, string dc)
+        : MaNV(ma), TenNV(Ten), SoDienThoaiNV(sdt), DiaChiNV(dc) {}
     int GetMaNV() const { return MaNV; }
     string GetTenNV() const { return TenNV; }
     string GetSoDienThoaiNV() const { return SoDienThoaiNV; }
     string GetDiaChiNV() const { return DiaChiNV; }
-    void SetTenNV(const string &ten) { TenNV = ten; }
+    void SetTenNV(const string &Ten) { TenNV = Ten; }
     void SetSoDienThoaiNV(const string &sdt) { SoDienThoaiNV = sdt; }
     void SetDiaChiNV(const string &dc) { DiaChiNV = dc; }
     // Hàm này sẽ hiển thị thông tin nhân viên.
@@ -353,10 +351,10 @@ private:
     vector<string> QuaTangDaDoi;
 
 public:
-    DonHang(int _maDonHang, const KhachHang &_khachHangDat)
-        : MaDonHang(_maDonHang), KhachHangDat(_khachHangDat), TongTienGoc(0), TongTienThucTe(0) {}
-    DonHang(int _maDonHang, const KhachHang &_khachHangDat, double _tongGoc, double _thucTe)
-        : MaDonHang(_maDonHang), KhachHangDat(_khachHangDat), TongTienGoc(_tongGoc), TongTienThucTe(_thucTe) {}
+    DonHang(int MaDonHang, const KhachHang &KhachHangDat)
+        : MaDonHang(MaDonHang), KhachHangDat(KhachHangDat), TongTienGoc(0), TongTienThucTe(0) {}
+    DonHang(int MaDonHang, const KhachHang &KhachHangDat, double TongTienGoc, double ThucTe)
+        : MaDonHang(MaDonHang), KhachHangDat(KhachHangDat), TongTienGoc(TongTienGoc), TongTienThucTe(ThucTe) {}
     int GetMaDonHang() const { return MaDonHang; }
     const KhachHang &GetKhachHangDat() const { return KhachHangDat; }
     const vector<pair<MenuItem *, int>> &GetDanhSachMonAn() const { return DanhSachMonAn; }
@@ -385,9 +383,9 @@ public:
         TongTienThucTe = amount;
     }
     // Thêm quà tặng đã đổi vào danh sách.
-    void ThemQuaTangDaDoi(const string &tenQua)
+    void ThemQuaTangDaDoi(const string &TenQua)
     {
-        QuaTangDaDoi.push_back(tenQua);
+        QuaTangDaDoi.push_back(TenQua);
     }
     // Hàm này sẽ hiển thị thông tin đơn hàng, bao gồm thông tin khách hàng, danh sách món ăn, quà tặng đã đổi và tổng tiền.
     void HienThiThongTin() const
@@ -485,7 +483,7 @@ private:
     array<LuaChonDoiDiem, 4> DanhSachLuaChonDoiDiem;
 
     KhachHang *ThanhVienHienTai = nullptr;
-    bool IsAdminLoggedIn = false;
+    bool AdminDangNhap = false;
     string AdminUsername = "admin";
     string AdminPassword = "admin123";
     string TenCuaHang;
@@ -496,21 +494,21 @@ private:
     double GiamGiaLanDau = 0.1;
     int SoLuongLonDeGiamGia = 5;
     double GiamGiaSoLuongLon = 0.05;
-    const int Gia_TRI_VND_CHO_MOT_DIEM = 1000;
+    const int GiaTriVNDChoMotDiem = 1000;
 
     const string FILE_BURGER = "burger.txt";
     const string FILE_DRINK = "drink.txt";
     const string FILE_THANHVIEN = "memberacc.txt";
     const string FILE_NHANVIEN = "nhanvien.txt";
     const string FILE_DonHang = "DonHang.txt";
-    const string FILE_CUAHANG = "cuahang.txt";
+    const string FILE_CuaHang = "CuaHang.txt";
     const string FILE_ADMINACC = "adminacc.txt";
     // Khởi tạo danh sách các lựa chọn đổi điểm cố định.
     void KhoiTaoLuaChonDoiDiemCoDinh()
     {
         // THAY ĐỔI: Không dùng clear() và emplace_back() nữa.
         // Thay vào đó, gán trực tiếp vào các phần tử của mảng.
-        DanhSachLuaChonDoiDiem[0] = LuaChonDoiDiem(1, 1000, "Giam 12% Gia tri don hang hien tai", "GiaM_Gia_PHAN_TRAM", 0.12);
+        DanhSachLuaChonDoiDiem[0] = LuaChonDoiDiem(1, 1000, "Giam 12% Gia tri don hang hien tai", "GiamGiaTheoPhanTram", 0.12);
         DanhSachLuaChonDoiDiem[1] = LuaChonDoiDiem(2, 150, "Moc khoa", "QUA_TANG", 0);
         DanhSachLuaChonDoiDiem[2] = LuaChonDoiDiem(3, 250, "Gau bong", "QUA_TANG", 0);
         DanhSachLuaChonDoiDiem[3] = LuaChonDoiDiem(4, 500, "Binh nuoc giu nhiet", "QUA_TANG", 0);
@@ -550,12 +548,12 @@ private:
         ifstream ifs(FILE_BURGER);
         if (!ifs.is_open())
             return;
-        string TenGoc, moTa, LoaiThit;
+        string TenGoc, MoTa, LoaiThit;
         int SoLuong;
         double Gia;
         while (getline(ifs, TenGoc))
         {
-            if (!getline(ifs, moTa))
+            if (!getline(ifs, MoTa))
                 break;
             if (!(ifs >> SoLuong))
             {
@@ -573,7 +571,7 @@ private:
             ifs.ignore();
             if (!getline(ifs, LoaiThit))
                 break;
-            DanhSachBurger.push_back(new Burger(TenGoc, moTa, SoLuong, Gia, LoaiThit));
+            DanhSachBurger.push_back(new Burger(TenGoc, MoTa, SoLuong, Gia, LoaiThit));
         }
         ifs.close();
     }
@@ -595,12 +593,12 @@ private:
         ifstream ifs(FILE_DRINK);
         if (!ifs.is_open())
             return;
-        string TenGoc, KichThuoc, moTaTrong;
+        string TenGoc, KichThuoc, MoTaTrong;
         int SoLuong;
         double Gia;
         while (getline(ifs, TenGoc))
         {
-            if (!getline(ifs, moTaTrong))
+            if (!getline(ifs, MoTaTrong))
                 break;
             if (!(ifs >> SoLuong))
             {
@@ -640,16 +638,16 @@ private:
         ifstream ifs(FILE_THANHVIEN);
         if (!ifs.is_open())
             return;
-        string username, password, ten, sdt, diaChi;
-        bool daMua;
+        string username, password, Ten, sdt, DiaChi;
+        bool DaMua;
         int diem;
         while (getline(ifs, username))
         {
             getline(ifs, password);
-            getline(ifs, ten);
+            getline(ifs, Ten);
             getline(ifs, sdt);
-            getline(ifs, diaChi);
-            if (!(ifs >> daMua))
+            getline(ifs, DiaChi);
+            if (!(ifs >> DaMua))
             {
                 ifs.clear();
                 ifs.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -663,7 +661,7 @@ private:
                 continue;
             }
             ifs.ignore();
-            DanhSachThanhVien.emplace_back(username, password, ten, sdt, diaChi, daMua, diem);
+            DanhSachThanhVien.emplace_back(username, password, Ten, sdt, DiaChi, DaMua, diem);
         }
         ifs.close();
     }
@@ -686,19 +684,19 @@ private:
         if (!ifs.is_open())
             return;
         int ma;
-        string ten, sdt, dc;
-        int maxMaNV = 0;
+        string Ten, sdt, dc;
+        int MaxMaNV = 0;
         while (ifs >> ma)
         {
             ifs.ignore();
-            getline(ifs, ten);
+            getline(ifs, Ten);
             getline(ifs, sdt);
             getline(ifs, dc);
-            DanhSachNhanVien.emplace_back(ma, ten, sdt, dc);
-            if (ma > maxMaNV)
-                maxMaNV = ma;
+            DanhSachNhanVien.emplace_back(ma, Ten, sdt, dc);
+            if (ma > MaxMaNV)
+                MaxMaNV = ma;
         }
-        MaNhanVienTiepTheo = maxMaNV + 1;
+        MaNhanVienTiepTheo = MaxMaNV + 1;
         ifs.close();
     }
     // Lưu danh sách nhân viên vào file.
@@ -714,16 +712,16 @@ private:
         ofs.close();
     }
     // Tìm một món ăn (burger hoặc drink) dựa trên tên đầy đủ của nó.
-    MenuItem *TimMonAnTheoTenDayDu(const string &tenDayDuMon)
+    MenuItem *TimMonAnTheoTenDayDu(const string &TenDayDuMonAn)
     {
         for (auto *item : DanhSachBurger)
         {
-            if (item->GetTen() == tenDayDuMon)
+            if (item->GetTen() == TenDayDuMonAn)
                 return item;
         }
         for (auto *item : DanhSachNuocUong)
         {
-            if (item->GetTen() == tenDayDuMon)
+            if (item->GetTen() == TenDayDuMonAn)
                 return item;
         }
         return nullptr;
@@ -754,33 +752,33 @@ private:
         ifstream ifs(FILE_DonHang);
         if (!ifs.is_open())
             return;
-        int maDon;
-        string sdtKhachDat, tenKhachDat, diaChiKhachDat;
-        double tongGoc, tongThucTe;
+        int MaDon;
+        string SDTKhachDat, TenKhachDat, DiaChiKhachDat;
+        double TongGoc, TongThucTe;
         int SoLuongLoaiMon, SoLuongQuaTang;
-        int maxMaDon = 0;
-        while (ifs >> maDon)
+        int MaxMaDon = 0;
+        while (ifs >> MaDon)
         {
             ifs.ignore();
-            getline(ifs, sdtKhachDat);
-            getline(ifs, tenKhachDat);
-            getline(ifs, diaChiKhachDat);
-            if (!(ifs >> tongGoc))
+            getline(ifs, SDTKhachDat);
+            getline(ifs, TenKhachDat);
+            getline(ifs, DiaChiKhachDat);
+            if (!(ifs >> TongGoc))
             {
                 ifs.clear();
                 ifs.ignore(numeric_limits<streamsize>::max(), '\n');
                 continue;
             }
             ifs.ignore();
-            if (!(ifs >> tongThucTe))
+            if (!(ifs >> TongThucTe))
             {
                 ifs.clear();
                 ifs.ignore(numeric_limits<streamsize>::max(), '\n');
                 continue;
             }
             ifs.ignore();
-            KhachHang khachHangSnapshot(tenKhachDat, sdtKhachDat, diaChiKhachDat);
-            DonHang donMoi(maDon, khachHangSnapshot, tongGoc, tongThucTe);
+            KhachHang khachHangSnapshot(TenKhachDat, SDTKhachDat, DiaChiKhachDat);
+            DonHang DonMoi(MaDon, khachHangSnapshot, TongGoc, TongThucTe);
             if (!(ifs >> SoLuongLoaiMon))
             {
                 ifs.clear();
@@ -790,9 +788,9 @@ private:
             ifs.ignore();
             for (int i = 0; i < SoLuongLoaiMon; ++i)
             {
-                string tenMonDayDu;
+                string TenMonDayDu;
                 int sl;
-                getline(ifs, tenMonDayDu);
+                getline(ifs, TenMonDayDu);
                 if (!(ifs >> sl))
                 {
                     ifs.clear();
@@ -800,11 +798,11 @@ private:
                     break;
                 }
                 ifs.ignore();
-                MenuItem *monPtr = TimMonAnTheoTenDayDu(tenMonDayDu);
-                if (monPtr)
-                    donMoi.ThemMonAn(monPtr, sl);
+                MenuItem *MonPtr = TimMonAnTheoTenDayDu(TenMonDayDu);
+                if (MonPtr)
+                    DonMoi.ThemMonAn(MonPtr, sl);
                 else
-                    cerr << "Canh bao: Khong tim thay mon an '" << tenMonDayDu << "' cho don hang #" << maDon << endl;
+                    cerr << "Canh bao: Khong tim thay mon an '" << TenMonDayDu << "' cho don hang #" << MaDon << endl;
             }
             if (!(ifs >> SoLuongQuaTang))
             {
@@ -815,16 +813,16 @@ private:
             ifs.ignore();
             for (int i = 0; i < SoLuongQuaTang; ++i)
             {
-                string tenQua;
-                if (!getline(ifs, tenQua))
+                string TenQua;
+                if (!getline(ifs, TenQua))
                     break;
-                donMoi.ThemQuaTangDaDoi(tenQua);
+                DonMoi.ThemQuaTangDaDoi(TenQua);
             }
-            DanhSachDonHang.push_back(donMoi);
-            if (maDon > maxMaDon)
-                maxMaDon = maDon;
+            DanhSachDonHang.push_back(DonMoi);
+            if (MaDon > MaxMaDon)
+                MaxMaDon = MaDon;
         }
-        MaDonHangTiepTheo = maxMaDon + 1;
+        MaDonHangTiepTheo = MaxMaDon + 1;
         ifs.close();
     }
     // Lưu danh sách đơn hàng vào file.
@@ -842,7 +840,7 @@ private:
     // Tải thông tin cửa hàng từ file.
     void TaiThongTinCuaHangTuFile()
     {
-        ifstream ifs(FILE_CUAHANG);
+        ifstream ifs(FILE_CuaHang);
         if (!ifs.is_open())
         {
             TenCuaHang = "Burger Ngon Da Nang";
@@ -858,7 +856,7 @@ private:
     // Lưu thông tin cửa hàng vào file.
     void LuuThongTinCuaHangRaFile() const
     {
-        ofstream ofs(FILE_CUAHANG);
+        ofstream ofs(FILE_CuaHang);
         if (!ofs.is_open())
             return;
         ofs << TenCuaHang << endl;
@@ -868,8 +866,8 @@ private:
     }
 
 public:
-    CuaHangBurger(string ten = "Burger Ngon Da Nang", string diaChi = "[Dia chi]", string sdt = "[So dien thoai]")
-        : TenCuaHang(ten), DiaChiCuaHang(diaChi), SoDienThoaiCuaHang(sdt),
+    CuaHangBurger(string Ten = "Burger Ngon Da Nang", string DiaChi = "[Dia chi]", string sdt = "[So dien thoai]")
+        : TenCuaHang(Ten), DiaChiCuaHang(DiaChi), SoDienThoaiCuaHang(sdt),
           MaDonHangTiepTheo(1), MaNhanVienTiepTheo(1)
     {
         TaiAdminAcc();
@@ -921,7 +919,7 @@ public:
         getline(cin, password);
         if (username == AdminUsername && password == AdminPassword)
         {
-            IsAdminLoggedIn = true;
+            AdminDangNhap = true;
             ThanhVienHienTai = nullptr;
             cout << "  Dang nhap Quan Ly thanh cong!" << endl;
             return true;
@@ -943,7 +941,7 @@ public:
             if (tv.GetUsername() == username && tv.GetPassword() == password)
             {
                 ThanhVienHienTai = &tv;
-                IsAdminLoggedIn = false;
+                AdminDangNhap = false;
                 cout << "  Chao mung tro lai, " << tv.GetTen() << "!" << endl;
                 return true;
             }
@@ -955,7 +953,7 @@ public:
     void DangKyThanhVien()
     {
         cout << "\n  --- Dang ky tai khoan Thanh vien moi ---" << endl;
-        string username, password, ten, sdt, diachi;
+        string username, password, Ten, sdt, DiaChi;
         while (true)
         {
             cout << "  Nhap Username mong muon: ";
@@ -996,8 +994,8 @@ public:
                 break;
             }
         }
-        cout << "  Nhap Ho ten: ";
-        getline(cin, ten);
+        cout << "  Nhap Ho Ten: ";
+        getline(cin, Ten);
         while (true)
         {
             cout << "  Nhap So dien thoai: ";
@@ -1026,17 +1024,17 @@ public:
             }
         }
         cout << "  Nhap Dia chi: ";
-        getline(cin, diachi);
-        DanhSachThanhVien.emplace_back(username, password, ten, sdt, diachi, false, 0);
+        getline(cin, DiaChi);
+        DanhSachThanhVien.emplace_back(username, password, Ten, sdt, DiaChi, false, 0);
         cout << "  Dang ky thanh vien thanh cong! Username: " << username << endl;
         cout << "  Vui long dang nhap de bat dau mua sam va huong uu dai." << endl;
     }
     // Hàm này dùng để đăng xuất thành viên hoặc quản lý
     void DangXuat()
     {
-        if (IsAdminLoggedIn)
+        if (AdminDangNhap)
         {
-            IsAdminLoggedIn = false;
+            AdminDangNhap = false;
             cout << "  Da dang xuat khoi tai khoan Quan ly." << endl;
         }
         else if (ThanhVienHienTai)
@@ -1059,16 +1057,16 @@ public:
         }
         cout << "\n  --- Thay doi thong tin ca nhan ---" << endl;
         ThanhVienHienTai->HienThiThongTin();
-        int choice = GetInputValidated<int>("  Ban muon thay doi thong tin nao?\n  1. Ho ten\n  2. So dien thoai\n  3. Dia chi\n  4. Mat khau\n  0. Quay lai\n  Nhap lua chon: ");
+        int choice = GetInputValidated<int>("  Ban muon thay doi thong tin nao?\n  1. Ho Ten\n  2. So dien thoai\n  3. Dia chi\n  4. Mat khau\n  0. Quay lai\n  Nhap lua chon: ");
         string TenMoi, SDTMoi, DCMoi, PassCu, PassMoi1, PassMoi2;
         switch (choice)
         {
         case 1:
-            cout << "  Ho ten hien tai: " << ThanhVienHienTai->GetTen() << endl;
-            cout << "  Nhap ho ten moi: ";
+            cout << "  Ho Ten hien tai: " << ThanhVienHienTai->GetTen() << endl;
+            cout << "  Nhap ho Ten moi: ";
             getline(cin, TenMoi);
             ThanhVienHienTai->SetTen(!TenMoi.empty() ? TenMoi : ThanhVienHienTai->GetTen());
-            cout << (!TenMoi.empty() ? "  Da cap nhat ho ten." : "  Khong thay doi ho ten.") << endl;
+            cout << (!TenMoi.empty() ? "  Da cap nhat ho Ten." : "  Khong thay doi ho Ten.") << endl;
             break;
         case 2:
             cout << "  So dien thoai hien tai: " << ThanhVienHienTai->GetSoDienThoai() << endl;
@@ -1155,21 +1153,21 @@ public:
         }
     }
     // Hàm này dùng để hiển thị danh sách các lựa chọn đổi điểm cho thành viên hiện tại.
-    void XemDanhSachLuaChonDoiDiemChoThanhVien(int diemHienCoCuaKhach, const string &loaiMuonXem) const
+    void XemDanhSachLuaChonDoiDiemChoThanhVien(int DiemHienCoCuaKhach, const string &LoaiMuonXem) const
     {
-        cout << "\n  --- Cac lua chon doi diem co the (" << (loaiMuonXem == "GiaM_Gia_PHAN_TRAM" ? "Giam Gia" : "Qua tang") << ") ---" << endl;
+        cout << "\n  --- Cac lua chon doi diem co the (" << (LoaiMuonXem == "GiamGiaTheoPhanTram" ? "Giam Gia" : "Qua tang") << ") ---" << endl;
         bool CoLuaChonPhuHop = false;
-        for (const auto &luaChon : DanhSachLuaChonDoiDiem)
+        for (const auto &LuaChon : DanhSachLuaChonDoiDiem)
         {
-            if (luaChon.LoaiPhanThuong == loaiMuonXem && diemHienCoCuaKhach >= luaChon.DiemCanDoi)
+            if (LuaChon.LoaiPhanThuong == LoaiMuonXem && DiemHienCoCuaKhach >= LuaChon.DiemCanDoi)
             {
-                luaChon.HienThi();
+                LuaChon.HienThi();
                 CoLuaChonPhuHop = true;
             }
         }
         if (!CoLuaChonPhuHop)
         {
-            cout << "  Ban khong du diem cho bat ky lua chon " << (loaiMuonXem == "GiaM_Gia_PHAN_TRAM" ? "Giam Gia" : "qua tang") << " nao hien tai." << endl;
+            cout << "  Ban khong du diem cho bat ky lua chon " << (LoaiMuonXem == "GiamGiaTheoPhanTram" ? "Giam Gia" : "qua tang") << " nao hien tai." << endl;
         }
     }
     // Hàm này dùng để tìm nhân viên theo mã nhân viên.
@@ -1188,7 +1186,7 @@ public:
         cout << "\n  --- Nhap/Cap nhat thong tin cua hang ---" << endl;
         string TempTen, TempDiaChi, TempSDT;
         cout << "  Ten cua hang hien tai: " << TenCuaHang << endl;
-        cout << "  Nhap ten cua hang moi (de trong neu khong doi): ";
+        cout << "  Nhap Ten cua hang moi (de trong neu khong doi): ";
         getline(cin, TempTen);
         TenCuaHang = !TempTen.empty() ? TempTen : TenCuaHang;
         cout << "  Dia chi cua hang hien tai: " << DiaChiCuaHang << endl;
@@ -1208,7 +1206,7 @@ public:
         int SoLuong;
         double Gia;
         cout << (LaBurger ? "\n  --- Them burger ---" : "\n  --- Them nuoc uong ---") << endl;
-        cout << "  Nhap ten goc " << (LaBurger ? "burger (vi du: Bo Pho Mai, Ga Gion): " : "nuoc uong (vi du: Coca Cola, Tra Dao): ");
+        cout << "  Nhap Ten goc " << (LaBurger ? "burger (vi du: Bo Pho Mai, Ga Gion): " : "nuoc uong (vi du: Coca Cola, Tra Dao): ");
         getline(cin, TenGoc);
         if (LaBurger)
         {
@@ -1292,17 +1290,17 @@ public:
             VeHangPhanCach("Burger", widths);
             for (const auto *burger : DanhSachBurger)
             {
-                string sttDisplay = to_string(stt++) + ".";
+                string STTDisplay = to_string(stt++) + ".";
                 stringstream GiaStream;
                 GiaStream << fixed << setprecision(0) << burger->GetGia();
 
                 if (LaAdminXem)
                 {
-                    VeHangBang({sttDisplay, burger->GetTenGocMenuItem(), to_string(burger->GetSoLuong()), GiaStream.str()}, widths);
+                    VeHangBang({STTDisplay, burger->GetTenGocMenuItem(), to_string(burger->GetSoLuong()), GiaStream.str()}, widths);
                 }
                 else
                 {
-                    VeHangBang({sttDisplay, burger->GetTenGocMenuItem(), GiaStream.str()}, widths);
+                    VeHangBang({STTDisplay, burger->GetTenGocMenuItem(), GiaStream.str()}, widths);
                 }
             }
         }
@@ -1311,18 +1309,18 @@ public:
             VeHangPhanCach("Nuoc Uong", widths);
             for (const auto *drink : DanhSachNuocUong)
             {
-                string sttDisplay = to_string(stt++) + ".";
-                string tenHienThi = drink->GetTenGocMenuItem() + " (" + drink->GetKichThuoc() + ")";
+                string STTDisplay = to_string(stt++) + ".";
+                string TenHienThi = drink->GetTenGocMenuItem() + " (" + drink->GetKichThuoc() + ")";
                 stringstream GiaStream;
                 GiaStream << fixed << setprecision(0) << drink->GetGia();
 
                 if (LaAdminXem)
                 {
-                    VeHangBang({sttDisplay, tenHienThi, to_string(drink->GetSoLuong()), GiaStream.str()}, widths);
+                    VeHangBang({STTDisplay, TenHienThi, to_string(drink->GetSoLuong()), GiaStream.str()}, widths);
                 }
                 else
                 {
-                    VeHangBang({sttDisplay, tenHienThi, GiaStream.str()}, widths);
+                    VeHangBang({STTDisplay, TenHienThi, GiaStream.str()}, widths);
                 }
             }
         }
@@ -1344,11 +1342,11 @@ public:
         cout << "\n  --- Chinh sua mon an: " << MonAnCanSua->GetTen() << " ---" << endl;
         if (Burger *burger = dynamic_cast<Burger *>(MonAnCanSua))
         {
-            string moTaMoiBurger, LoaiThitMoi;
+            string MoTaMoiBurger, LoaiThitMoi;
             cout << "  Mo ta hien tai: " << burger->GetMoTa() << endl;
             cout << "  Mo ta moi cho Burger (de trong de giu nguyen): ";
-            getline(cin, moTaMoiBurger);
-            burger->SetMoTa(!moTaMoiBurger.empty() ? moTaMoiBurger : burger->GetMoTa());
+            getline(cin, MoTaMoiBurger);
+            burger->SetMoTa(!MoTaMoiBurger.empty() ? MoTaMoiBurger : burger->GetMoTa());
             cout << "  Loai thit hien tai: " << burger->GetLoaiThit() << endl;
             cout << "  Loai thit moi (de trong de giu nguyen): ";
             getline(cin, LoaiThitMoi);
@@ -1389,13 +1387,13 @@ public:
             }
         }
         cout << "  Gia moi (nhap so am de giu nguyen [" << fixed << setprecision(0) << MonAnCanSua->GetGia() << "]): ";
-        string inputG;
-        getline(cin, inputG);
-        if (!inputG.empty())
+        string inputGia;
+        getline(cin, inputGia);
+        if (!inputGia.empty())
         {
             try
             {
-                double g = stod(inputG);
+                double g = stod(inputGia);
                 if (g >= 0)
                     MonAnCanSua->SetGia(g);
             }
@@ -1471,43 +1469,43 @@ public:
     void ThemDonHangChoKhachHoacThanhVien()
     {
         cout << "\n  --- Them don hang moi (Quan ly) ---" << endl;
-        int loaiKhach = GetInputValidated<int>("  Don hang nay cho:\n  1. Thanh vien da dang ky\n  2. Khach vang lai\n  Nhap lua chon: ");
-        KhachHang *khachHangThucTe = nullptr;
-        KhachHang khachHangDatDonHang("", "", "");
-        if (loaiKhach == 1)
+        int LoaiKhach = GetInputValidated<int>("  Don hang nay cho:\n  1. Thanh vien da dang ky\n  2. Khach vang lai\n  Nhap lua chon: ");
+        KhachHang *KhachHangThucTe = nullptr;
+        KhachHang KhachHangDatDonHang("", "", "");
+        if (LoaiKhach == 1)
         {
             string idTimKiem;
             cout << "  Nhap Username hoac SDT cua thanh vien: ";
             getline(cin, idTimKiem);
-            khachHangThucTe = TimThanhVienTheoUsername(idTimKiem);
-            if (!khachHangThucTe)
-                khachHangThucTe = TimThanhVienTheoSDT(idTimKiem);
-            if (!khachHangThucTe)
+            KhachHangThucTe = TimThanhVienTheoUsername(idTimKiem);
+            if (!KhachHangThucTe)
+                KhachHangThucTe = TimThanhVienTheoSDT(idTimKiem);
+            if (!KhachHangThucTe)
             {
                 cout << "  Khong tim thay thanh vien." << endl;
                 return;
             }
-            cout << "  Don hang cho thanh vien: " << khachHangThucTe->GetTen() << endl;
-            khachHangDatDonHang = *khachHangThucTe;
+            cout << "  Don hang cho thanh vien: " << KhachHangThucTe->GetTen() << endl;
+            KhachHangDatDonHang = *KhachHangThucTe;
         }
-        else if (loaiKhach == 2)
+        else if (LoaiKhach == 2)
         {
-            string ten, sdt, dc;
-            cout << "  Xin moi nhap ten: ";
-            getline(cin, ten);
+            string Ten, sdt, dc;
+            cout << "  Xin moi nhap Ten: ";
+            getline(cin, Ten);
             cout << "  Xin moi nhap so dien thoai: ";
             getline(cin, sdt);
             cout << "  Xin moi nhap dia chi: ";
             getline(cin, dc);
-            khachHangDatDonHang = KhachHang(ten, sdt, dc);
+            KhachHangDatDonHang = KhachHang(Ten, sdt, dc);
         }
         else
         {
             cout << "  Lua chon khong hop le." << endl;
             return;
         }
-        DonHang donMoi(MaDonHangTiepTheo, khachHangDatDonHang);
-        char themMonAnYN;
+        DonHang DonMoi(MaDonHangTiepTheo, KhachHangDatDonHang);
+        char ThemMonAn;
         do
         {
             HienThiDanhSachMenuDayDu(false);
@@ -1519,67 +1517,67 @@ public:
             int STTChon = GetInputValidated<int>("  Nhap STT mon an muon them (0 de hoan tat): ");
             if (STTChon == 0)
                 break;
-            MenuItem *monAnDaChon = GetMonAnTheoSTTTongHop(STTChon);
-            if (!monAnDaChon)
+            MenuItem *MonAnDaChon = GetMonAnTheoSTTTongHop(STTChon);
+            if (!MonAnDaChon)
             {
                 cout << "STT khong hop le." << endl;
-                themMonAnYN = 'y';
+                ThemMonAn = 'y';
                 continue;
             }
             int SoLuongMua = GetInputValidated<int>("  Nhap so luong: ");
             if (SoLuongMua <= 0)
             {
                 cout << "So luong khong hop le." << endl;
-                themMonAnYN = 'y';
+                ThemMonAn = 'y';
                 continue;
             }
-            if (SoLuongMua <= monAnDaChon->GetSoLuong())
+            if (SoLuongMua <= MonAnDaChon->GetSoLuong())
             {
-                donMoi.ThemMonAn(monAnDaChon, SoLuongMua);
-                monAnDaChon->SetSoLuong(monAnDaChon->GetSoLuong() - SoLuongMua);
+                DonMoi.ThemMonAn(MonAnDaChon, SoLuongMua);
+                MonAnDaChon->SetSoLuong(MonAnDaChon->GetSoLuong() - SoLuongMua);
             }
             else
             {
                 cout << "  So luong khong du trong kho." << endl;
             }
-            themMonAnYN = GetInputValidated<char>("  Them mon khac? (y/n): ");
-        } while (themMonAnYN == 'y' || themMonAnYN == 'Y');
-        if (donMoi.GetDanhSachMonAn().empty())
+            ThemMonAn = GetInputValidated<char>("  Them mon khac? (y/n): ");
+        } while (ThemMonAn == 'y' || ThemMonAn == 'Y');
+        if (DonMoi.GetDanhSachMonAn().empty())
         {
             cout << "  Don hang trong. Huy them don hang." << endl;
             return;
         }
-        donMoi.TinhLaiTongTienGoc();
-        double tongTienThanhToan = donMoi.GetTongTienGoc();
-        if (khachHangThucTe)
+        DonMoi.TinhLaiTongTienGoc();
+        double TongTienThanhToan = DonMoi.GetTongTienGoc();
+        if (KhachHangThucTe)
         {
-            if (!khachHangThucTe->GetDaMuaLanDau() && tongTienThanhToan > 0)
+            if (!KhachHangThucTe->GetDaMuaLanDau() && TongTienThanhToan > 0)
             {
-                double tienGiam = tongTienThanhToan * GiamGiaLanDau;
-                tongTienThanhToan -= tienGiam;
+                double TienGiam = TongTienThanhToan * GiamGiaLanDau;
+                TongTienThanhToan -= TienGiam;
                 cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaLanDau * 100 << "% cho thanh vien mua lan dau." << endl;
-                khachHangThucTe->SetDaMuaLanDau(true);
+                KhachHangThucTe->SetDaMuaLanDau(true);
             }
-            if (donMoi.GetDanhSachMonAn().size() >= (size_t)SoLuongLonDeGiamGia && tongTienThanhToan > 0)
+            if (DonMoi.GetDanhSachMonAn().size() >= (size_t)SoLuongLonDeGiamGia && TongTienThanhToan > 0)
             {
-                double tienGiam = tongTienThanhToan * GiamGiaSoLuongLon;
-                tongTienThanhToan -= tienGiam;
+                double TienGiam = TongTienThanhToan * GiamGiaSoLuongLon;
+                TongTienThanhToan -= TienGiam;
                 cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaSoLuongLon * 100 << "% cho don hang so luong lon." << endl;
             }
-            tongTienThanhToan = (tongTienThanhToan < 0) ? 0 : tongTienThanhToan;
-            int diemThuong = static_cast<int>(tongTienThanhToan / Gia_TRI_VND_CHO_MOT_DIEM);
-            if (diemThuong > 0)
+            TongTienThanhToan = (TongTienThanhToan < 0) ? 0 : TongTienThanhToan;
+            int DiemThuong = static_cast<int>(TongTienThanhToan / GiaTriVNDChoMotDiem);
+            if (DiemThuong > 0)
             {
-                khachHangThucTe->ThemDiem(diemThuong);
-                cout << "  Thanh vien " << khachHangThucTe->GetTen() << " duoc cong " << diemThuong << " diem." << endl;
-                cout << "  Tong diem hien tai: " << khachHangThucTe->GetDiemTichLuy() << " diem." << endl;
+                KhachHangThucTe->ThemDiem(DiemThuong);
+                cout << "  Thanh vien " << KhachHangThucTe->GetTen() << " duoc cong " << DiemThuong << " diem." << endl;
+                cout << "  Tong diem hien tai: " << KhachHangThucTe->GetDiemTichLuy() << " diem." << endl;
             }
         }
-        donMoi.SetTongTienThucTe(tongTienThanhToan);
-        DanhSachDonHang.push_back(donMoi);
+        DonMoi.SetTongTienThucTe(TongTienThanhToan);
+        DanhSachDonHang.push_back(DonMoi);
         MaDonHangTiepTheo++;
-        cout << "  Da them don hang #" << donMoi.GetMaDonHang() << " thanh cong!" << endl;
-        donMoi.HienThiThongTin();
+        cout << "  Da them don hang #" << DonMoi.GetMaDonHang() << " thanh cong!" << endl;
+        DonMoi.HienThiThongTin();
     }
     // Hàm này dùng để xóa đơn hàng theo mã đơn hàng.
     void XoaDonHang()
@@ -1587,23 +1585,23 @@ public:
         HienThiDanhSachDonHang();
         if (DanhSachDonHang.empty())
             return;
-        int maDonHangXoa = GetInputValidated<int>("  Nhap ma don hang muon xoa: ");
+        int MaDonHangXoa = GetInputValidated<int>("  Nhap ma don hang muon xoa: ");
         for (auto it = DanhSachDonHang.begin(); it != DanhSachDonHang.end(); ++it)
         {
-            if (it->GetMaDonHang() == maDonHangXoa)
+            if (it->GetMaDonHang() == MaDonHangXoa)
             {
-                char confirm = GetInputValidated<char>("  Ban co chac chan muon xoa don hang #" + to_string(maDonHangXoa) + "? (y/n): ");
+                char confirm = GetInputValidated<char>("  Ban co chac chan muon xoa don hang #" + to_string(MaDonHangXoa) + "? (y/n): ");
                 if (confirm == 'y' || confirm == 'Y')
                 {
-                    const auto &danhSachMATrongDon = it->GetDanhSachMonAn();
-                    for (const auto &item : danhSachMATrongDon)
+                    const auto &DanhSachMaTrongDonHang = it->GetDanhSachMonAn();
+                    for (const auto &item : DanhSachMaTrongDonHang)
                     {
                         if (item.first)
                             item.first->SetSoLuong(item.first->GetSoLuong() + item.second);
                     }
                     cout << "  Luu y: Neu don hang nay cua thanh vien va da co Giao dich diem/uu dai, viec hoan lai cac uu dai do chua duoc tu dong xu ly." << endl;
                     DanhSachDonHang.erase(it);
-                    cout << "  Da xoa don hang #" << maDonHangXoa << " thanh cong!" << endl;
+                    cout << "  Da xoa don hang #" << MaDonHangXoa << " thanh cong!" << endl;
                 }
                 else
                 {
@@ -1612,20 +1610,20 @@ public:
                 return;
             }
         }
-        cout << "  Khong tim thay don hang #" << maDonHangXoa << endl;
+        cout << "  Khong tim thay don hang #" << MaDonHangXoa << endl;
     }
     // Hàm này dùng để thêm nhân viên mới.
     void ThemNhanVien()
     {
         cout << "\n  --- Them nhan vien ---" << endl;
-        string ten, sdt, dc;
-        cout << "  Nhap ten nhan vien: ";
-        getline(cin, ten);
+        string Ten, sdt, dc;
+        cout << "  Nhap Ten nhan vien: ";
+        getline(cin, Ten);
         cout << "  Nhap so dien thoai: ";
         getline(cin, sdt);
         cout << "  Nhap dia chi: ";
         getline(cin, dc);
-        DanhSachNhanVien.emplace_back(MaNhanVienTiepTheo, ten, sdt, dc);
+        DanhSachNhanVien.emplace_back(MaNhanVienTiepTheo, Ten, sdt, dc);
         cout << "  Da them nhan vien #" << MaNhanVienTiepTheo++ << " thanh cong!" << endl;
     }
     // Hàm này dùng để xem danh sách nhân viên.
@@ -1654,24 +1652,24 @@ public:
         XemDanhSachNhanVien();
         if (DanhSachNhanVien.empty())
             return;
-        int maNVChinhSua = GetInputValidated<int>("  Nhap ma nhan vien muon chinh sua: ");
-        NhanVien *nvCanSua = TimNhanVien(maNVChinhSua);
-        if (!nvCanSua)
+        int MaNVChinhSua = GetInputValidated<int>("  Nhap ma nhan vien muon chinh sua: ");
+        NhanVien *NVCanSua = TimNhanVien(MaNVChinhSua);
+        if (!NVCanSua)
         {
-            cout << "  Khong tim thay nhan vien co ma #" << maNVChinhSua << endl;
+            cout << "  Khong tim thay nhan vien co ma #" << MaNVChinhSua << endl;
             return;
         }
-        cout << "\n  --- Chinh sua thong tin nhan vien #" << nvCanSua->GetMaNV() << " ---" << endl;
+        cout << "\n  --- Chinh sua thong tin nhan vien #" << NVCanSua->GetMaNV() << " ---" << endl;
         string TenMoi, SDTMoi, DCMoi;
-        cout << "  Ten moi (de trong de giu nguyen [" << nvCanSua->GetTenNV() << "]): ";
+        cout << "  Ten moi (de trong de giu nguyen [" << NVCanSua->GetTenNV() << "]): ";
         getline(cin, TenMoi);
-        nvCanSua->SetTenNV(!TenMoi.empty() ? TenMoi : nvCanSua->GetTenNV());
-        cout << "  So dien thoai moi (de trong de giu nguyen [" << nvCanSua->GetSoDienThoaiNV() << "]): ";
+        NVCanSua->SetTenNV(!TenMoi.empty() ? TenMoi : NVCanSua->GetTenNV());
+        cout << "  So dien thoai moi (de trong de giu nguyen [" << NVCanSua->GetSoDienThoaiNV() << "]): ";
         getline(cin, SDTMoi);
-        nvCanSua->SetSoDienThoaiNV(!SDTMoi.empty() ? SDTMoi : nvCanSua->GetSoDienThoaiNV());
-        cout << "  Dia chi moi (de trong de giu nguyen [" << nvCanSua->GetDiaChiNV() << "]): ";
+        NVCanSua->SetSoDienThoaiNV(!SDTMoi.empty() ? SDTMoi : NVCanSua->GetSoDienThoaiNV());
+        cout << "  Dia chi moi (de trong de giu nguyen [" << NVCanSua->GetDiaChiNV() << "]): ";
         getline(cin, DCMoi);
-        nvCanSua->SetDiaChiNV(!DCMoi.empty() ? DCMoi : nvCanSua->GetDiaChiNV());
+        NVCanSua->SetDiaChiNV(!DCMoi.empty() ? DCMoi : NVCanSua->GetDiaChiNV());
         cout << "  Da cap nhat thong tin nhan vien!" << endl;
     }
     // Hàm này dùng để xóa nhân viên theo mã nhân viên.
@@ -1703,7 +1701,8 @@ public:
     // Hàm này dùng để hiển thị danh sách thành viên.
     void HienThiDanhSachThanhVien() const
     {
-        cout << "\n                                      --- Danh sach thanh vien ---" << endl;
+        cout << "\n"
+             << string(40, ' ') << "--- Danh sach thanh vien ---\n";
         if (DanhSachThanhVien.empty())
         {
             cout << "  Chua co thanh vien nao." << endl;
@@ -1716,8 +1715,8 @@ public:
         VeDuongBienBang(widths);
         for (const auto &tv : DanhSachThanhVien)
         {
-            string daMua = tv.GetDaMuaLanDau() ? "Roi" : "Chua";
-            VeHangBang({tv.GetUsername(), tv.GetTen(), tv.GetSoDienThoai(), tv.GetDiaChi(), to_string(tv.GetDiemTichLuy()), daMua}, widths);
+            string DaMua = tv.GetDaMuaLanDau() ? "Roi" : "Chua";
+            VeHangBang({tv.GetUsername(), tv.GetTen(), tv.GetSoDienThoai(), tv.GetDiaChi(), to_string(tv.GetDiemTichLuy()), DaMua}, widths);
         }
         VeDuongBienBang(widths);
     }
@@ -1730,15 +1729,15 @@ public:
             cout << "  Chua co don hang nao de thong ke." << endl;
             return;
         }
-        double tongDoanhThuGoc = 0, tongDoanhThuThucTe = 0;
+        double TongDoanhThuGoc = 0, TongDoanhThuThucTe = 0;
         for (const auto &DonHang : DanhSachDonHang)
         {
-            tongDoanhThuGoc += DonHang.GetTongTienGoc();
-            tongDoanhThuThucTe += DonHang.GetTongTienThucTe();
+            TongDoanhThuGoc += DonHang.GetTongTienGoc();
+            TongDoanhThuThucTe += DonHang.GetTongTienThucTe();
         }
         cout << "  Tong so don hang: " << DanhSachDonHang.size() << endl;
-        cout << "  Tong doanh thu (theo tien goc): " << fixed << setprecision(0) << tongDoanhThuGoc << " VND" << endl;
-        cout << "  Tong doanh thu thuc te (sau Giam Gia): " << fixed << setprecision(0) << tongDoanhThuThucTe << " VND" << endl;
+        cout << "  Tong doanh thu (theo tien goc): " << fixed << setprecision(0) << TongDoanhThuGoc << " VND" << endl;
+        cout << "  Tong doanh thu thuc te (sau Giam Gia): " << fixed << setprecision(0) << TongDoanhThuThucTe << " VND" << endl;
     }
     // Hàm này dùng để báo cáo món bán chạy.
     void BaoCaoMonBanChay() const
@@ -1772,8 +1771,8 @@ public:
         vector<pair<string, int>> vecSLMon(SoLuongMonDaBan.begin(), SoLuongMonDaBan.end());
         sort(vecSLMon.begin(), vecSLMon.end(), [](const pair<string, int> &a, const pair<string, int> &b)
              { return a.second > b.second; });
-        vector<pair<string, double>> vecDTMon(DoanhThuTungMonGoc.begin(), DoanhThuTungMonGoc.end());
-        sort(vecDTMon.begin(), vecDTMon.end(), [](const pair<string, double> &a, const pair<string, double> &b)
+        vector<pair<string, double>> DTMon(DoanhThuTungMonGoc.begin(), DoanhThuTungMonGoc.end());
+        sort(DTMon.begin(), DTMon.end(), [](const pair<string, double> &a, const pair<string, double> &b)
              { return a.second > b.second; });
         cout << "\n  --- Top mon an ban chay nhat theo So Luong ---" << endl;
         vector<int> widthsSL = {8, 40, 20};
@@ -1790,11 +1789,11 @@ public:
         VeDuongBienBang(widthsDT);
         VeHangBang({"Hang", "Ten Mon", "Doanh Thu (VND)"}, widthsDT);
         VeDuongBienBang(widthsDT);
-        for (size_t i = 0; i < vecDTMon.size() && i < 10; ++i)
+        for (size_t i = 0; i < DTMon.size() && i < 10; ++i)
         {
             stringstream ss;
-            ss << fixed << setprecision(0) << vecDTMon[i].second;
-            VeHangBang({to_string(i + 1), vecDTMon[i].first, ss.str()}, widthsDT);
+            ss << fixed << setprecision(0) << DTMon[i].second;
+            VeHangBang({to_string(i + 1), DTMon[i].first, ss.str()}, widthsDT);
         }
         VeDuongBienBang(widthsDT);
     }
@@ -1812,14 +1811,14 @@ public:
         HienThiDanhSachMenuDayDu(false);
         if (DanhSachBurger.empty() && DanhSachNuocUong.empty())
             return;
-        int luaChonXemChiTiet = GetInputValidated<int>("  Nhap STT mon an de xem chi tiet (0 de bo qua): ", "Lua chon khong hop le.");
-        if (luaChonXemChiTiet != 0)
+        int LuaChonXemChiTiet = GetInputValidated<int>("  Nhap STT mon an de xem chi tiet (0 de bo qua): ", "Lua chon khong hop le.");
+        if (LuaChonXemChiTiet != 0)
         {
-            MenuItem *monAnDuocChon = GetMonAnTheoSTTTongHop(luaChonXemChiTiet);
-            if (monAnDuocChon)
+            MenuItem *MonAnDuocChon = GetMonAnTheoSTTTongHop(LuaChonXemChiTiet);
+            if (MonAnDuocChon)
             {
                 cout << "\n  --- Thong tin chi tiet ---" << endl;
-                monAnDuocChon->HienThiThongTin();
+                MonAnDuocChon->HienThiThongTin();
             }
             else
             {
@@ -1837,113 +1836,113 @@ public:
             return;
         }
         HienThiDanhSachMenuDayDu(false);
-        KhachHang khachHangDatDonHang("", "", "");
-        bool laThanhVienDat = (ThanhVienHienTai != nullptr);
-        if (laThanhVienDat)
+        KhachHang KhachHangDatDonHang("", "", "");
+        bool LaThanhVienDat = (ThanhVienHienTai != nullptr);
+        if (LaThanhVienDat)
         {
-            khachHangDatDonHang = *ThanhVienHienTai;
+            KhachHangDatDonHang = *ThanhVienHienTai;
             cout << "  Dat hang voi tu cach thanh vien: " << ThanhVienHienTai->GetTen() << endl;
         }
         else
         {
-            string ten, sdt, dc;
+            string Ten, sdt, dc;
             cout << "  Vui long nhap thong tin dat hang:" << endl;
-            cout << "  Nhap ten cua ban: ";
-            getline(cin, ten);
+            cout << "  Nhap Ten cua ban: ";
+            getline(cin, Ten);
             cout << "  Nhap so dien thoai: ";
             getline(cin, sdt);
             cout << "  Nhap dia chi: ";
             getline(cin, dc);
-            khachHangDatDonHang = KhachHang(ten, sdt, dc);
+            KhachHangDatDonHang = KhachHang(Ten, sdt, dc);
         }
-        DonHang donMoi(MaDonHangTiepTheo, khachHangDatDonHang);
-        char datTiep;
+        DonHang DonMoi(MaDonHangTiepTheo, KhachHangDatDonHang);
+        char DatTiep;
         do
         {
             int STTChon = GetInputValidated<int>("  Nhap STT mon an muon dat (0 de hoan tat): ");
             if (STTChon == 0)
                 break;
-            MenuItem *monAnDaChon = GetMonAnTheoSTTTongHop(STTChon);
-            if (!monAnDaChon)
+            MenuItem *MonAnDaChon = GetMonAnTheoSTTTongHop(STTChon);
+            if (!MonAnDaChon)
             {
                 cout << "STT khong hop le." << endl;
-                datTiep = 'y';
+                DatTiep = 'y';
                 continue;
             }
             int SoLuongDat = GetInputValidated<int>("  Nhap so luong: ");
             if (SoLuongDat <= 0)
             {
                 cout << "So luong khong hop le." << endl;
-                datTiep = 'y';
+                DatTiep = 'y';
                 continue;
             }
-            if (SoLuongDat <= monAnDaChon->GetSoLuong())
+            if (SoLuongDat <= MonAnDaChon->GetSoLuong())
             {
-                donMoi.ThemMonAn(monAnDaChon, SoLuongDat);
-                monAnDaChon->SetSoLuong(monAnDaChon->GetSoLuong() - SoLuongDat);
-                cout << "  Da them " << monAnDaChon->GetTen() << " vao don hang." << endl;
+                DonMoi.ThemMonAn(MonAnDaChon, SoLuongDat);
+                MonAnDaChon->SetSoLuong(MonAnDaChon->GetSoLuong() - SoLuongDat);
+                cout << "  Da them " << MonAnDaChon->GetTen() << " vao don hang." << endl;
             }
             else
             {
-                cout << "  So luong khong du trong kho. Chi con " << monAnDaChon->GetSoLuong() << "." << endl;
+                cout << "  So luong khong du trong kho. Chi con " << MonAnDaChon->GetSoLuong() << "." << endl;
             }
-            datTiep = GetInputValidated<char>("  Muon dat them mon khac? (y/n): ");
-        } while (datTiep == 'y' || datTiep == 'Y');
-        if (donMoi.GetDanhSachMonAn().empty())
+            DatTiep = GetInputValidated<char>("  Muon dat them mon khac? (y/n): ");
+        } while (DatTiep == 'y' || DatTiep == 'Y');
+        if (DonMoi.GetDanhSachMonAn().empty())
         {
             cout << "  Don hang trong. Huy bo tao don hang." << endl;
             return;
         }
-        donMoi.TinhLaiTongTienGoc();
-        double tongTienTamTinh = donMoi.GetTongTienGoc();
-        double tongTienCuoiCung = tongTienTamTinh;
-        cout << "  Tong Gia tien tam tinh: " << fixed << setprecision(0) << tongTienTamTinh << " VND" << endl;
-        if (laThanhVienDat && ThanhVienHienTai)
+        DonMoi.TinhLaiTongTienGoc();
+        double TongTienTamTinh = DonMoi.GetTongTienGoc();
+        double TongTienCuoiCung = TongTienTamTinh;
+        cout << "  Tong Gia tien tam tinh: " << fixed << setprecision(0) << TongTienTamTinh << " VND" << endl;
+        if (LaThanhVienDat && ThanhVienHienTai)
         {
-            const LuaChonDoiDiem *luaChonGiamGia12 = nullptr;
+            const LuaChonDoiDiem *LuaChonGiamGia = nullptr;
             for (const auto &lc : DanhSachLuaChonDoiDiem)
             {
-                if (lc.LoaiPhanThuong == "GiaM_Gia_PHAN_TRAM" && lc.DiemCanDoi == 1000)
+                if (lc.LoaiPhanThuong == "GiamGiaTheoPhanTram" && lc.DiemCanDoi == 1000)
                 {
-                    luaChonGiamGia12 = &lc;
+                    LuaChonGiamGia = &lc;
                     break;
                 }
             }
-            if (luaChonGiamGia12 && ThanhVienHienTai->GetDiemTichLuy() >= luaChonGiamGia12->DiemCanDoi)
+            if (LuaChonGiamGia && ThanhVienHienTai->GetDiemTichLuy() >= LuaChonGiamGia->DiemCanDoi)
             {
-                char chonGiamGia = GetInputValidated<char>("  Ban co " + to_string(ThanhVienHienTai->GetDiemTichLuy()) + " diem. Ban co muon dung " + to_string(luaChonGiamGia12->DiemCanDoi) + " diem de " + luaChonGiamGia12->MoTaPhanThuong + " khong? (y/n): ");
-                if (chonGiamGia == 'y' || chonGiamGia == 'Y')
+                char ChonGiamGia = GetInputValidated<char>("  Ban co " + to_string(ThanhVienHienTai->GetDiemTichLuy()) + " diem. Ban co muon dung " + to_string(LuaChonGiamGia->DiemCanDoi) + " diem de " + LuaChonGiamGia->MoTaPhanThuong + " khong? (y/n): ");
+                if (ChonGiamGia == 'y' || ChonGiamGia == 'Y')
                 {
-                    if (ThanhVienHienTai->SuDungDiem(luaChonGiamGia12->DiemCanDoi))
+                    if (ThanhVienHienTai->SuDungDiem(LuaChonGiamGia->DiemCanDoi))
                     {
-                        double tienGiam = tongTienCuoiCung * luaChonGiamGia12->GiaTri;
-                        tongTienCuoiCung -= tienGiam;
-                        cout << "  Da ap dung Giam Gia " << fixed << setprecision(0) << luaChonGiamGia12->GiaTri * 100 << "%. So tien Giam: " << fixed << setprecision(0) << tienGiam << " VND." << endl;
+                        double TienGiam = TongTienCuoiCung * LuaChonGiamGia->GiaTri;
+                        TongTienCuoiCung -= TienGiam;
+                        cout << "  Da ap dung Giam Gia " << fixed << setprecision(0) << LuaChonGiamGia->GiaTri * 100 << "%. So tien Giam: " << fixed << setprecision(0) << TienGiam << " VND." << endl;
                         cout << "  Diem con lai: " << ThanhVienHienTai->GetDiemTichLuy() << " diem." << endl;
                     }
                 }
             }
-            if (!ThanhVienHienTai->GetDaMuaLanDau() && tongTienCuoiCung > 0)
+            if (!ThanhVienHienTai->GetDaMuaLanDau() && TongTienCuoiCung > 0)
             {
-                double tienGiamLanDau = tongTienCuoiCung * GiamGiaLanDau;
-                tongTienCuoiCung -= tienGiamLanDau;
-                cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaLanDau * 100 << "% (tuong duong " << fixed << setprecision(0) << tienGiamLanDau << " VND) cho lan dat dau cua thanh vien!" << endl;
+                double TienGiamLanDau = TongTienCuoiCung * GiamGiaLanDau;
+                TongTienCuoiCung -= TienGiamLanDau;
+                cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaLanDau * 100 << "% (tuong duong " << fixed << setprecision(0) << TienGiamLanDau << " VND) cho lan dat dau cua thanh vien!" << endl;
                 ThanhVienHienTai->SetDaMuaLanDau(true);
             }
-            if (donMoi.GetDanhSachMonAn().size() >= (size_t)SoLuongLonDeGiamGia && tongTienCuoiCung > 0)
+            if (DonMoi.GetDanhSachMonAn().size() >= (size_t)SoLuongLonDeGiamGia && TongTienCuoiCung > 0)
             {
-                double tienGiamSLDon = tongTienCuoiCung * GiamGiaSoLuongLon;
-                tongTienCuoiCung -= tienGiamSLDon;
-                cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaSoLuongLon * 100 << "% (tuong duong " << fixed << setprecision(0) << tienGiamSLDon << " VND) cho don hang so luong lon!" << endl;
+                double TienGiamSLLon = TongTienCuoiCung * GiamGiaSoLuongLon;
+                TongTienCuoiCung -= TienGiamSLLon;
+                cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaSoLuongLon * 100 << "% (tuong duong " << fixed << setprecision(0) << TienGiamSLLon << " VND) cho don hang so luong lon!" << endl;
             }
-            tongTienCuoiCung = (tongTienCuoiCung < 0) ? 0 : tongTienCuoiCung;
-            donMoi.SetTongTienThucTe(tongTienCuoiCung);
-            cout << "  Tong tien thanh toan cuoi cung: " << fixed << setprecision(0) << tongTienCuoiCung << " VND" << endl;
-            int diemThuong = (tongTienCuoiCung > 0) ? static_cast<int>(tongTienCuoiCung / Gia_TRI_VND_CHO_MOT_DIEM) : 0;
-            if (diemThuong > 0)
+            TongTienCuoiCung = (TongTienCuoiCung < 0) ? 0 : TongTienCuoiCung;
+            DonMoi.SetTongTienThucTe(TongTienCuoiCung);
+            cout << "  Tong tien thanh toan cuoi cung: " << fixed << setprecision(0) << TongTienCuoiCung << " VND" << endl;
+            int DiemThuong = (TongTienCuoiCung > 0) ? static_cast<int>(TongTienCuoiCung / GiaTriVNDChoMotDiem) : 0;
+            if (DiemThuong > 0)
             {
-                ThanhVienHienTai->ThemDiem(diemThuong);
-                cout << "  Ban da duoc cong " << diemThuong << " diem cho don hang nay." << endl;
+                ThanhVienHienTai->ThemDiem(DiemThuong);
+                cout << "  Ban da duoc cong " << DiemThuong << " diem cho don hang nay." << endl;
             }
             cout << "  Tong diem tich luy hien tai cua ban la: " << ThanhVienHienTai->GetDiemTichLuy() << " diem." << endl;
             char chonDoiQua = GetInputValidated<char>("  Ban co muon dung diem de doi qua tang khong? (y/n): ");
@@ -1955,24 +1954,24 @@ public:
                            { return lc.LoaiPhanThuong == "QUA_TANG" && ThanhVienHienTai->GetDiemTichLuy() >= lc.DiemCanDoi; }))
                 {
 
-                    int idLuaChonQua = GetInputValidated<int>("  Nhap ID qua tang muon doi (0 de bo qua): ");
-                    if (idLuaChonQua > 0)
+                    int IDLuaChonQua = GetInputValidated<int>("  Nhap ID qua tang muon doi (0 de bo qua): ");
+                    if (IDLuaChonQua > 0)
                     {
-                        const LuaChonDoiDiem *luaChonQuaDaChon = nullptr;
+                        const LuaChonDoiDiem *LuaChonQuaDaChon = nullptr;
                         for (const auto &lc : DanhSachLuaChonDoiDiem)
                         {
-                            if (lc.Id == idLuaChonQua && lc.LoaiPhanThuong == "QUA_TANG" && ThanhVienHienTai->GetDiemTichLuy() >= lc.DiemCanDoi)
+                            if (lc.Id == IDLuaChonQua && lc.LoaiPhanThuong == "QUA_TANG" && ThanhVienHienTai->GetDiemTichLuy() >= lc.DiemCanDoi)
                             {
-                                luaChonQuaDaChon = &lc;
+                                LuaChonQuaDaChon = &lc;
                                 break;
                             }
                         }
-                        if (luaChonQuaDaChon)
+                        if (LuaChonQuaDaChon)
                         {
-                            if (ThanhVienHienTai->SuDungDiem(luaChonQuaDaChon->DiemCanDoi))
+                            if (ThanhVienHienTai->SuDungDiem(LuaChonQuaDaChon->DiemCanDoi))
                             {
-                                donMoi.ThemQuaTangDaDoi(luaChonQuaDaChon->MoTaPhanThuong);
-                                cout << "  Ban da doi " << luaChonQuaDaChon->DiemCanDoi << " diem de nhan: " << luaChonQuaDaChon->MoTaPhanThuong << endl;
+                                DonMoi.ThemQuaTangDaDoi(LuaChonQuaDaChon->MoTaPhanThuong);
+                                cout << "  Ban da doi " << LuaChonQuaDaChon->DiemCanDoi << " diem de nhan: " << LuaChonQuaDaChon->MoTaPhanThuong << endl;
                                 cout << "  So diem con lai: " << ThanhVienHienTai->GetDiemTichLuy() << " diem." << endl;
                             }
                         }
@@ -1986,12 +1985,12 @@ public:
         }
         else
         {
-            donMoi.SetTongTienThucTe(tongTienCuoiCung);
-            cout << "  Tong tien thanh toan: " << fixed << setprecision(0) << tongTienCuoiCung << " VND" << endl;
+            DonMoi.SetTongTienThucTe(TongTienCuoiCung);
+            cout << "  Tong tien thanh toan: " << fixed << setprecision(0) << TongTienCuoiCung << " VND" << endl;
         }
-        DanhSachDonHang.push_back(donMoi);
+        DanhSachDonHang.push_back(DonMoi);
         MaDonHangTiepTheo++;
-        cout << "  Da tao don hang #" << donMoi.GetMaDonHang() << " thanh cong!" << endl;
+        cout << "  Da tao don hang #" << DonMoi.GetMaDonHang() << " thanh cong!" << endl;
     }
     // Hàm này dùng để xem thông tin tài khoản của người dùng (thành viên).
     void XemThongTinTaiKhoan_User()
@@ -2011,41 +2010,41 @@ public:
 
 int main()
 {
-    CuaHangBurger cuaHang;
-    int luaChonBanDau;
-    const int menuWidth = 70;
+    CuaHangBurger CuaHang;
+    int LuaChonBanDau;
+    const int MenuWidth = 70;
     do
     {
         cout << "\n";
-        VeDuongNgang(menuWidth, '*');
-        cout << string((menuWidth - 44) / 2, ' ') << "***** PHAN MEM QUAN LY CUA HANG BURGER *****" << endl;
-        VeDuongNgang(menuWidth, '*');
-        cout << "* " << setw((menuWidth - 30) / 2) << ""
-             << "CHAO MUNG DEN VOI CUA HANG!" << setw((menuWidth - 28) / 2) << right << " *" << endl;
-        cout << "* " << setw((menuWidth - 26) / 2) << ""
-             << "1. Dang nhap Quan Ly" << setw((menuWidth - 18) / 2) << right << " *" << endl;
-        cout << "* " << setw((menuWidth - 26) / 2) << ""
-             << "2. Dang nhap Thanh Vien" << setw((menuWidth - 24) / 2) << right << " *" << endl;
-        cout << "* " << setw((menuWidth - 26) / 2) << ""
-             << "3. Dang ky Thanh Vien moi" << setw((menuWidth - 28) / 2) << right << " *" << endl;
-        cout << "* " << setw((menuWidth - 26) / 2) << ""
-             << "4. Khach mua nhanh" << setw((menuWidth - 14) / 2) << right << " *" << endl;
-        cout << "* " << setw((menuWidth - 26) / 2) << ""
-             << "0. Thoat ung dung" << setw((menuWidth - 12) / 2) << right << " *" << endl;
-        VeDuongNgang(menuWidth, '*');
-        luaChonBanDau = GetInputValidated<int>("  Nhap lua chon cua ban: ", "  Lua chon khong hop le. Vui long nhap so.");
-        switch (luaChonBanDau)
+        VeDuongNgang(MenuWidth, '*');
+        cout << string((MenuWidth - 44) / 2, ' ') << "***** PHAN MEM QUAN LY CUA HANG BURGER *****" << endl;
+        VeDuongNgang(MenuWidth, '*');
+        cout << "* " << setw((MenuWidth - 30) / 2) << ""
+             << "CHAO MUNG DEN VOI CUA HANG!" << setw((MenuWidth - 28) / 2) << right << " *" << endl;
+        cout << "* " << setw((MenuWidth - 26) / 2) << ""
+             << "1. Dang nhap Quan Ly" << setw((MenuWidth - 18) / 2) << right << " *" << endl;
+        cout << "* " << setw((MenuWidth - 26) / 2) << ""
+             << "2. Dang nhap Thanh Vien" << setw((MenuWidth - 24) / 2) << right << " *" << endl;
+        cout << "* " << setw((MenuWidth - 26) / 2) << ""
+             << "3. Dang ky Thanh Vien moi" << setw((MenuWidth - 28) / 2) << right << " *" << endl;
+        cout << "* " << setw((MenuWidth - 26) / 2) << ""
+             << "4. Khach mua nhanh" << setw((MenuWidth - 14) / 2) << right << " *" << endl;
+        cout << "* " << setw((MenuWidth - 26) / 2) << ""
+             << "0. Thoat ung dung" << setw((MenuWidth - 12) / 2) << right << " *" << endl;
+        VeDuongNgang(MenuWidth, '*');
+        LuaChonBanDau = GetInputValidated<int>("  Nhap lua chon cua ban: ", "  Lua chon khong hop le. Vui long nhap so.");
+        switch (LuaChonBanDau)
         {
         case 1:
-            if (cuaHang.DangNhapAdmin())
+            if (CuaHang.DangNhapAdmin())
             {
-                int choiceQuanLy;
+                int LuaChonQuanLy;
                 do
                 {
                     cout << "\n";
-                    VeDuongNgang(menuWidth, '-');
-                    cout << string((menuWidth - 26) / 2, ' ') << "--- CHUC NANG QUAN LY ---" << endl;
-                    VeDuongNgang(menuWidth, '-');
+                    VeDuongNgang(MenuWidth, '-');
+                    cout << string((MenuWidth - 26) / 2, ' ') << "--- CHUC NANG QUAN LY ---" << endl;
+                    VeDuongNgang(MenuWidth, '-');
                     cout << "  1. Nhap/Cap nhat thong tin cua hang\n"
                          << "  2. Them burger\n"
                          << "  3. Them nuoc uong\n"
@@ -2063,142 +2062,142 @@ int main()
                          << "  15. Bao cao doanh thu\n"
                          << "  16. Bao cao mon ban chay\n"
                          << "  0. Thoat khoi menu quan ly (Se dang xuat)" << endl;
-                    choiceQuanLy = GetInputValidated<int>("  Nhap lua chon cua ban: ");
-                    switch (choiceQuanLy)
+                    LuaChonQuanLy = GetInputValidated<int>("  Nhap lua chon cua ban: ");
+                    switch (LuaChonQuanLy)
                     {
                     case 1:
-                        cuaHang.NhapThongTinCuaHang();
+                        CuaHang.NhapThongTinCuaHang();
                         break;
                     case 2:
-                        cuaHang.ThemMonAn(true);
+                        CuaHang.ThemMonAn(true);
                         break;
                     case 3:
-                        cuaHang.ThemMonAn(false);
+                        CuaHang.ThemMonAn(false);
                         break;
                     case 4:
-                        cuaHang.HienThiDanhSachMenuDayDu(true);
+                        CuaHang.HienThiDanhSachMenuDayDu(true);
                         break;
                     case 5:
-                        cuaHang.ChinhSuaMonAn();
+                        CuaHang.ChinhSuaMonAn();
                         break;
                     case 6:
-                        cuaHang.XoaMonAn();
+                        CuaHang.XoaMonAn();
                         break;
                     case 7:
-                        cuaHang.HienThiDanhSachDonHang();
+                        CuaHang.HienThiDanhSachDonHang();
                         break;
                     case 8:
-                        cuaHang.ThemDonHangChoKhachHoacThanhVien();
+                        CuaHang.ThemDonHangChoKhachHoacThanhVien();
                         break;
                     case 9:
-                        cuaHang.XoaDonHang();
+                        CuaHang.XoaDonHang();
                         break;
                     case 10:
-                        cuaHang.ThemNhanVien();
+                        CuaHang.ThemNhanVien();
                         break;
                     case 11:
-                        cuaHang.XemDanhSachNhanVien();
+                        CuaHang.XemDanhSachNhanVien();
                         break;
                     case 12:
-                        cuaHang.ChinhSuaNhanVien();
+                        CuaHang.ChinhSuaNhanVien();
                         break;
                     case 13:
-                        cuaHang.XoaNhanVien();
+                        CuaHang.XoaNhanVien();
                         break;
                     case 14:
-                        cuaHang.HienThiDanhSachThanhVien();
+                        CuaHang.HienThiDanhSachThanhVien();
                         break;
                     case 15:
-                        cuaHang.BaoCaoDoanhThu();
+                        CuaHang.BaoCaoDoanhThu();
                         break;
                     case 16:
-                        cuaHang.BaoCaoMonBanChay();
+                        CuaHang.BaoCaoMonBanChay();
                         break;
                     case 0:
-                        cuaHang.DangXuat();
+                        CuaHang.DangXuat();
                         cout << "  Da dang xuat va quay lai menu chinh." << endl;
                         break;
                     default:
                         cout << "  Lua chon khong hop le." << endl;
                     }
-                    if (choiceQuanLy != 0)
+                    if (LuaChonQuanLy != 0)
                     {
                         cout << "\n  Nhan Enter de tiep tuc...";
                         cin.get();
                     }
-                } while (choiceQuanLy != 0);
+                } while (LuaChonQuanLy != 0);
             }
             break;
         case 2:
-            if (cuaHang.DangNhapThanhVien())
+            if (CuaHang.DangNhapThanhVien())
             {
-                int choiceThanhVien;
+                int LuaChonThanhVien;
                 do
                 {
                     cout << "\n";
-                    VeDuongNgang(menuWidth, '-');
-                    cout << string((menuWidth - 30) / 2, ' ') << "--- CHUC NANG THANH VIEN ---" << endl;
-                    VeDuongNgang(menuWidth, '-');
+                    VeDuongNgang(MenuWidth, '-');
+                    cout << string((MenuWidth - 30) / 2, ' ') << "--- CHUC NANG THANH VIEN ---" << endl;
+                    VeDuongNgang(MenuWidth, '-');
                     cout << "  1. Xem thong tin cua hang\n  2. Xem menu\n  3. Dat mon\n  4. Xem thong tin tai khoan va diem\n  5. Thay doi thong tin ca nhan\n  0. Thoat khoi menu thanh vien (Se dang xuat)" << endl;
-                    choiceThanhVien = GetInputValidated<int>("  Nhap lua chon cua ban: ");
-                    switch (choiceThanhVien)
+                    LuaChonThanhVien = GetInputValidated<int>("  Nhap lua chon cua ban: ");
+                    switch (LuaChonThanhVien)
                     {
                     case 1:
-                        cuaHang.XemThongTinCuaHang_User();
+                        CuaHang.XemThongTinCuaHang_User();
                         break;
                     case 2:
-                        cuaHang.XemMenu_User();
+                        CuaHang.XemMenu_User();
                         break;
                     case 3:
-                        cuaHang.DatMon_User();
+                        CuaHang.DatMon_User();
                         break;
                     case 4:
-                        cuaHang.XemThongTinTaiKhoan_User();
+                        CuaHang.XemThongTinTaiKhoan_User();
                         break;
                     case 5:
-                        cuaHang.ThayDoiThongTinCaNhan();
+                        CuaHang.ThayDoiThongTinCaNhan();
                         break;
                     case 0:
-                        cuaHang.DangXuat();
+                        CuaHang.DangXuat();
                         cout << "  Da dang xuat va quay lai menu chinh." << endl;
                         break;
                     default:
                         cout << "  Lua chon khong hop le." << endl;
                     }
-                    if (choiceThanhVien != 0)
+                    if (LuaChonThanhVien != 0)
                     {
                         cout << "\n  Nhan Enter de tiep tuc...";
                         cin.get();
                     }
-                } while (choiceThanhVien != 0);
+                } while (LuaChonThanhVien != 0);
             }
             break;
         case 3:
-            cuaHang.DangKyThanhVien();
+            CuaHang.DangKyThanhVien();
             cout << "\n  Nhan Enter de quay lai menu chinh...";
             cin.get();
             break;
         case 4:
         {
-            int choiceKhach;
+            int LuaChonKhach;
             do
             {
                 cout << "\n";
-                VeDuongNgang(menuWidth, '-');
-                cout << string((menuWidth - 28) / 2, ' ') << "--- CHUC NANG KHACH HANG ---" << endl;
-                VeDuongNgang(menuWidth, '-');
+                VeDuongNgang(MenuWidth, '-');
+                cout << string((MenuWidth - 28) / 2, ' ') << "--- CHUC NANG KHACH HANG ---" << endl;
+                VeDuongNgang(MenuWidth, '-');
                 cout << "  1. Xem thong tin cua hang\n  2. Xem menu\n  3. Dat mon\n  0. Quay lai menu chinh" << endl;
-                choiceKhach = GetInputValidated<int>("  Nhap lua chon cua ban: ");
-                switch (choiceKhach)
+                LuaChonKhach = GetInputValidated<int>("  Nhap lua chon cua ban: ");
+                switch (LuaChonKhach)
                 {
                 case 1:
-                    cuaHang.XemThongTinCuaHang_User();
+                    CuaHang.XemThongTinCuaHang_User();
                     break;
                 case 2:
-                    cuaHang.XemMenu_User();
+                    CuaHang.XemMenu_User();
                     break;
                 case 3:
-                    cuaHang.DatMon_User();
+                    CuaHang.DatMon_User();
                     break;
                 case 0:
                     cout << "  Quay lai menu chinh." << endl;
@@ -2206,12 +2205,12 @@ int main()
                 default:
                     cout << "  Lua chon khong hop le." << endl;
                 }
-                if (choiceKhach != 0)
+                if (LuaChonKhach != 0)
                 {
                     cout << "\n  Nhan Enter de tiep tuc...";
                     cin.get();
                 }
-            } while (choiceKhach != 0);
+            } while (LuaChonKhach != 0);
         }
         break;
         case 0:
@@ -2223,6 +2222,6 @@ int main()
             cout << "\n  Nhan Enter de thu lai...";
             cin.get();
         }
-    } while (luaChonBanDau != 0);
+    } while (LuaChonBanDau != 0);
     return 0;
 }
