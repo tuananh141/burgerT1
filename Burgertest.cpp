@@ -93,8 +93,8 @@ struct LuaChonDoiDiem
     string LoaiPhanThuong;
     double GiaTri;
     LuaChonDoiDiem() : Id(0), DiemCanDoi(0), MoTaPhanThuong(""), LoaiPhanThuong(""), GiaTri(0) {}
-    LuaChonDoiDiem(int Id, int Diem, string MoTa, string Loai, double GiaTri = 0)
-        : Id(Id), DiemCanDoi(Diem), MoTaPhanThuong(MoTa), LoaiPhanThuong(Loai), GiaTri(GiaTri) {}
+    LuaChonDoiDiem(int _id, int _diem, string _moTa, string _loai, double _GiaTri = 0)
+        : Id(_id), DiemCanDoi(_diem), MoTaPhanThuong(_moTa), LoaiPhanThuong(_loai), GiaTri(_GiaTri) {}
     void HienThi() const
     {
         cout << "  ID: " << Id << " | Diem: " << DiemCanDoi << " | Phan thuong: " << MoTaPhanThuong;
@@ -165,8 +165,8 @@ private:
     string LoaiThit;
 
 public:
-    Burger(string _TenGocBurger, string _MoTaBurger, int _SoLuong, double _Gia, string LoaiThit)
-        : MenuItem(_TenGocBurger, _MoTaBurger, _SoLuong, _Gia), LoaiThit(LoaiThit)
+    Burger(string _TenGocBurger, string _MoTaBurger, int _SoLuong, double _Gia, string _LoaiThit)
+        : MenuItem(_TenGocBurger, _MoTaBurger, _SoLuong, _Gia), LoaiThit(_LoaiThit)
     {
         CapNhatTenDayDu();
     }
@@ -241,9 +241,9 @@ private:
     int DiemTichLuy;
 
 public:
-    KhachHang(string _username, string _password, string _ten, string _sdt, string _dc, bool _daMua = false, int Diem = 0)
+    KhachHang(string _username, string _password, string _ten, string _sdt, string _dc, bool _daMua = false, int _diem = 0)
         : Username(_username), Password(_password), Ten(_ten), SoDienThoai(_sdt), DiaChi(_dc),
-          DaMuaLanDau(_daMua), DiemTichLuy(Diem) {}
+          DaMuaLanDau(_daMua), DiemTichLuy(_diem) {}
     KhachHang(string _ten, string _sdt, string _dc)
         : Username(""), Password(""), Ten(_ten), SoDienThoai(_sdt), DiaChi(_dc),
           DaMuaLanDau(true), DiemTichLuy(0) {}
@@ -496,7 +496,7 @@ private:
     double GiamGiaLanDau = 0.1;
     int SoLuongLonDeGiamGia = 5;
     double GiamGiaSoLuongLon = 0.05;
-    const int Gia_TRI_VND_CHO_MOTDiem = 1000;
+    const int Gia_TRI_VND_CHO_MOT_DIEM = 1000;
 
     const string FILE_BURGER = "burger.txt";
     const string FILE_DRINK = "drink.txt";
@@ -1335,14 +1335,14 @@ public:
         if (DanhSachBurger.empty() && DanhSachNuocUong.empty())
             return;
         int STTChon = GetInputValidated<int>("  Nhap STT mon an muon chinh sua: ");
-        MenuItem *monAnCanSua = GetMonAnTheoSTTTongHop(STTChon);
-        if (!monAnCanSua)
+        MenuItem *MonAnCanSua = GetMonAnTheoSTTTongHop(STTChon);
+        if (!MonAnCanSua)
         {
             cout << "  STT khong hop le." << endl;
             return;
         }
-        cout << "\n  --- Chinh sua mon an: " << monAnCanSua->GetTen() << " ---" << endl;
-        if (Burger *burger = dynamic_cast<Burger *>(monAnCanSua))
+        cout << "\n  --- Chinh sua mon an: " << MonAnCanSua->GetTen() << " ---" << endl;
+        if (Burger *burger = dynamic_cast<Burger *>(MonAnCanSua))
         {
             string moTaMoiBurger, LoaiThitMoi;
             cout << "  Mo ta hien tai: " << burger->GetMoTa() << endl;
@@ -1354,7 +1354,7 @@ public:
             getline(cin, LoaiThitMoi);
             burger->SetLoaiThit(!LoaiThitMoi.empty() ? LoaiThitMoi : burger->GetLoaiThit());
         }
-        else if (Drink *drink = dynamic_cast<Drink *>(monAnCanSua))
+        else if (Drink *drink = dynamic_cast<Drink *>(MonAnCanSua))
         {
             string KichThuocMoi;
             cout << "  Kich thuoc hien tai: " << drink->GetKichThuoc() << endl;
@@ -1373,7 +1373,7 @@ public:
                 }
             }
         }
-        cout << "  So luong moi (nhap so am de giu nguyen [" << monAnCanSua->GetSoLuong() << "]): ";
+        cout << "  So luong moi (nhap so am de giu nguyen [" << MonAnCanSua->GetSoLuong() << "]): ";
         string inputSL;
         getline(cin, inputSL);
         if (!inputSL.empty())
@@ -1382,13 +1382,13 @@ public:
             {
                 int sl = stoi(inputSL);
                 if (sl >= 0)
-                    monAnCanSua->SetSoLuong(sl);
+                    MonAnCanSua->SetSoLuong(sl);
             }
             catch (const std::exception &e)
             {
             }
         }
-        cout << "  Gia moi (nhap so am de giu nguyen [" << fixed << setprecision(0) << monAnCanSua->GetGia() << "]): ";
+        cout << "  Gia moi (nhap so am de giu nguyen [" << fixed << setprecision(0) << MonAnCanSua->GetGia() << "]): ";
         string inputG;
         getline(cin, inputG);
         if (!inputG.empty())
@@ -1397,7 +1397,7 @@ public:
             {
                 double g = stod(inputG);
                 if (g >= 0)
-                    monAnCanSua->SetGia(g);
+                    MonAnCanSua->SetGia(g);
             }
             catch (const std::exception &e)
             {
@@ -1567,7 +1567,7 @@ public:
                 cout << "  Ap dung Giam Gia " << fixed << setprecision(0) << GiamGiaSoLuongLon * 100 << "% cho don hang so luong lon." << endl;
             }
             tongTienThanhToan = (tongTienThanhToan < 0) ? 0 : tongTienThanhToan;
-            int diemThuong = static_cast<int>(tongTienThanhToan / Gia_TRI_VND_CHO_MOTDiem);
+            int diemThuong = static_cast<int>(tongTienThanhToan / Gia_TRI_VND_CHO_MOT_DIEM);
             if (diemThuong > 0)
             {
                 khachHangThucTe->ThemDiem(diemThuong);
@@ -1939,7 +1939,7 @@ public:
             tongTienCuoiCung = (tongTienCuoiCung < 0) ? 0 : tongTienCuoiCung;
             donMoi.SetTongTienThucTe(tongTienCuoiCung);
             cout << "  Tong tien thanh toan cuoi cung: " << fixed << setprecision(0) << tongTienCuoiCung << " VND" << endl;
-            int diemThuong = (tongTienCuoiCung > 0) ? static_cast<int>(tongTienCuoiCung / Gia_TRI_VND_CHO_MOTDiem) : 0;
+            int diemThuong = (tongTienCuoiCung > 0) ? static_cast<int>(tongTienCuoiCung / Gia_TRI_VND_CHO_MOT_DIEM) : 0;
             if (diemThuong > 0)
             {
                 ThanhVienHienTai->ThemDiem(diemThuong);
