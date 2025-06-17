@@ -10,44 +10,41 @@
 #include <numeric>
 #include <array>
 using namespace std;
-// === CÁC HÀM TIỆN ÍCH VẼ BẢNG ===
 // Hàm vẽ đường viền trên, giữa và dưới của bảng.
-void VeDuongBienBang(const vector<int> &widths)
+void VeDuongBienBang(const vector<int> &Widths)
 {
     cout << "  +";
-    for (int w : widths)
+    for (int w : Widths)
     {
         cout << string(w, '-') << "+";
     }
     cout << endl;
 }
 // Hàm vẽ một hàng của bảng, với dữ liệu được căn chỉnh.
-void VeHangBang(const vector<string> &cells, const vector<int> &widths)
+void VeHangBang(const vector<string> &DuLieu, const vector<int> &Widths)
 {
     cout << "  |";
-    for (size_t i = 0; i < cells.size(); ++i)
+    for (size_t i = 0; i < DuLieu.size(); ++i)
     {
-        string padded_cell = " " + cells[i];
-        cout << left << setw(widths[i]) << padded_cell << "|";
+        string DL = " " + DuLieu[i];
+        cout << left << setw(Widths[i]) << DL << "|";
     }
     cout << endl;
 }
-// Hàm vẽ một dòng phân cách có chữ ở giữa.
-void VeHangPhanCach(string text, const vector<int> &widths)
+// Hàm vẽ một dòng phân cách có tiêu đề ở giữa.
+void VeHangPhanCach(string DuLieu, const vector<int> &Widths)
 {
     cout << "  |";
-    int total_width = accumulate(widths.begin(), widths.end(), 0) + widths.size() - 1;
-    string text_to_insert = " " + text + " ";
-    int padding_total = total_width - text_to_insert.length();
-    int padding_left = padding_total / 2;
-    int padding_right = padding_total - padding_left;
-    // In ra dòng hoàn chỉnh
-    cout << string(padding_left, '-') << text_to_insert << string(padding_right, '-') << "|" << endl;
+    int TotalWidhts = accumulate(Widths.begin(), Widths.end(), 0) + Widths.size() - 1;
+    string DL = " " + DuLieu + " ";
+    int count = TotalWidhts - DL.length();
+    int Trai = count / 2;
+    int Phai = count - Trai;
+    cout << string(Trai, '-') << DL << string(Phai, '-') << "|" << endl;
 }
-// CÁC HÀM VÀ LỚP CỦA CHƯƠNG TRÌNH
-// Template function để lấy và kiểm tra tính hợp lệ của dữ liệu nhập từ người dùng.
+// Hàm mẫu để lấy và kiểm tra tính hợp lệ của dữ liệu nhập từ người dùng.
 template <typename T>
-T GetInputValidated(const string &prompt, const string &errorMessage = "  Loi: Du lieu nhap khong hop le. Vui long thu lai.")
+T GetInputValidated(const string &prompt, const string &em = "  Loi: Du lieu nhap khong hop le. Vui long thu lai.")
 {
     T value;
     while (true)
@@ -58,7 +55,7 @@ T GetInputValidated(const string &prompt, const string &errorMessage = "  Loi: D
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << errorMessage << endl;
+            cout << em << endl;
         }
         else
         {
@@ -68,11 +65,11 @@ T GetInputValidated(const string &prompt, const string &errorMessage = "  Loi: D
     }
 }
 // Vẽ một đường kẻ ngang với chiều dài và ký tự cho trước.
-void VeDuongNgang(int chieuDai, char kyTu = '-')
+void VeDuongNgang(int ChieuDai, char KyTu = '-')
 {
-    for (int i = 0; i < chieuDai; ++i)
+    for (int i = 0; i < ChieuDai; ++i)
     {
-        cout << kyTu;
+        cout << KyTu;
     }
     cout << endl;
 }
@@ -85,8 +82,7 @@ string StringToUpper(string s)
 // Đại diện cho một lựa chọn đổi điểm thưởng trong chương trình khách hàng thân thiết.
 struct LuaChonDoiDiem
 {
-    int Id;
-    int DiemCanDoi;
+    int Id, DiemCanDoi;
     string MoTaPhanThuong;
     string LoaiPhanThuong;
     double GiaTri;
@@ -506,8 +502,6 @@ private:
     // Khởi tạo danh sách các lựa chọn đổi điểm cố định.
     void KhoiTaoLuaChonDoiDiemCoDinh()
     {
-        // THAY ĐỔI: Không dùng clear() và emplace_back() nữa.
-        // Thay vào đó, gán trực tiếp vào các phần tử của mảng.
         DanhSachLuaChonDoiDiem[0] = LuaChonDoiDiem(1, 1000, "Giam 12% Gia tri don hang hien tai", "GiamGiaTheoPhanTram", 0.12);
         DanhSachLuaChonDoiDiem[1] = LuaChonDoiDiem(2, 150, "Moc khoa", "QUA_TANG", 0);
         DanhSachLuaChonDoiDiem[2] = LuaChonDoiDiem(3, 250, "Gau bong", "QUA_TANG", 0);
@@ -1332,25 +1326,33 @@ public:
         HienThiDanhSachMenuDayDu(true);
         if (DanhSachBurger.empty() && DanhSachNuocUong.empty())
             return;
+
         int STTChon = GetInputValidated<int>("  Nhap STT mon an muon chinh sua: ");
         MenuItem *MonAnCanSua = GetMonAnTheoSTTTongHop(STTChon);
+
         if (!MonAnCanSua)
         {
             cout << "  STT khong hop le." << endl;
             return;
         }
+
         cout << "\n  --- Chinh sua mon an: " << MonAnCanSua->GetTen() << " ---" << endl;
+
+        // Xử lý các thuộc tính riêng của Burger và Drink (giữ nguyên như cũ)
         if (Burger *burger = dynamic_cast<Burger *>(MonAnCanSua))
         {
             string MoTaMoiBurger, LoaiThitMoi;
             cout << "  Mo ta hien tai: " << burger->GetMoTa() << endl;
             cout << "  Mo ta moi cho Burger (de trong de giu nguyen): ";
             getline(cin, MoTaMoiBurger);
-            burger->SetMoTa(!MoTaMoiBurger.empty() ? MoTaMoiBurger : burger->GetMoTa());
+            if (!MoTaMoiBurger.empty())
+                burger->SetMoTa(MoTaMoiBurger);
+
             cout << "  Loai thit hien tai: " << burger->GetLoaiThit() << endl;
             cout << "  Loai thit moi (de trong de giu nguyen): ";
             getline(cin, LoaiThitMoi);
-            burger->SetLoaiThit(!LoaiThitMoi.empty() ? LoaiThitMoi : burger->GetLoaiThit());
+            if (!LoaiThitMoi.empty())
+                burger->SetLoaiThit(LoaiThitMoi);
         }
         else if (Drink *drink = dynamic_cast<Drink *>(MonAnCanSua))
         {
@@ -1371,35 +1373,19 @@ public:
                 }
             }
         }
-        cout << "  So luong moi (nhap so am de giu nguyen [" << MonAnCanSua->GetSoLuong() << "]): ";
-        string inputSL;
-        getline(cin, inputSL);
-        if (!inputSL.empty())
+        string PromtSL = "  So luong moi (nhap so am de giu nguyen [" + to_string(MonAnCanSua->GetSoLuong()) + "]): ";
+        int SoLuongMoi = GetInputValidated<int>(PromtSL);
+        if (SoLuongMoi >= 0)
         {
-            try
-            {
-                int sl = stoi(inputSL);
-                if (sl >= 0)
-                    MonAnCanSua->SetSoLuong(sl);
-            }
-            catch (const std::exception &e)
-            {
-            }
+            MonAnCanSua->SetSoLuong(SoLuongMoi);
         }
-        cout << "  Gia moi (nhap so am de giu nguyen [" << fixed << setprecision(0) << MonAnCanSua->GetGia() << "]): ";
-        string inputGia;
-        getline(cin, inputGia);
-        if (!inputGia.empty())
+        stringstream Gia;
+        Gia << fixed << setprecision(0) << MonAnCanSua->GetGia();
+        string PromtGia = "  Gia moi (nhap so am de giu nguyen [" + Gia.str() + "]): ";
+        double GiaMoi = GetInputValidated<double>(PromtGia);
+        if (GiaMoi >= 0)
         {
-            try
-            {
-                double g = stod(inputGia);
-                if (g >= 0)
-                    MonAnCanSua->SetGia(g);
-            }
-            catch (const std::exception &e)
-            {
-            }
+            MonAnCanSua->SetGia(GiaMoi);
         }
         cout << "  Da cap nhat thong tin mon an!" << endl;
     }
