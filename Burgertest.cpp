@@ -79,6 +79,7 @@ string StringToUpper(string s)
     transform(s.begin(), s.end(), s.begin(), ::toupper);
     return s;
 }
+
 // Đại diện cho một lựa chọn đổi điểm thưởng trong chương trình khách hàng thân thiết.
 struct LuaChonDoiDiem
 {
